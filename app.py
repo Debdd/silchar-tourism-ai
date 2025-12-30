@@ -18,6 +18,16 @@ from dotenv import load_dotenv  # Import dotenv
 load_dotenv()  # This looks for a .env file and loads its variables
 google_api_key = os.getenv("GOOGLE_API_KEY")
 
+GENERAL_SILCHAR_INFO = """
+Silchar, the 'Island of Peace,' is the headquarters of Cachar district and the gateway to the Barak Valley. 
+- Name Origin: Derived from 'Shil' (Rock) and 'Char' (Riverside), referring to the rocky banks of the Barak River.
+- History: Founded in 1832 by Captain Thomas Fisher; it is home to the world's first polo club (1850).
+- Language: Primarily Bengali (Sylheti dialect), but English, Hindi, and Assamese are widely understood.
+- Geography: Surrounded by Manipur (East), Bangladesh (West), Mizoram (South), and the Barail Hills (North).
+- Best Time to Visit: November to February (Cool and pleasant).
+- Famous For: Tea gardens, paper mills (HPC), and historic Kachari kingdom ruins.
+"""
+
 # Safety check: if the key is missing from .env, show a warning
 if not google_api_key:
     st.error("Missing Google API Key! Please add it to your .env file.")
@@ -102,13 +112,11 @@ if google_api_key:
 
     # --- 4. MODERN RETRIEVAL CHAIN ---
     # Setup the LLM
-    # OLD (Causes 404 error)
-    # llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.3)
-
-    # NEW (Correct for 2026)
     llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.3)
 
     # Define the Prompt
+    """
+    
     system_prompt = (
         "You are a friendly Silchar tourism guide. "
         "Use the following pieces of retrieved context to answer the question. "
@@ -117,6 +125,42 @@ if google_api_key:
         "\n\n"
         "{context}"
     )
+    """
+
+    system_prompt = f"""
+        You are a helpful Silchar Tourism Assistant. 
+        1. First, search the provided 'silchar_data' for specific details.
+        2. If the user asks about something NOT in 'silchar_data' (e.g., general history, weather, or location), 
+           use the following GENERAL_SILCHAR_INFO to answer:
+           {GENERAL_SILCHAR_INFO}
+        3. If the query is completely unrelated to Silchar or tourism, politely redirect them back to Silchar topics.
+        4. Always provide information in a friendly and helpful tone, suitable for tourists.
+        5. Keep responses concise and easy to understand for tourists.
+        6. If you don't have specific information in 'silchar_data', use the GENERAL_SILCHAR_INFO to provide helpful context.
+        7. When referencing specific places or attractions, try to include nearby landmarks or transportation options.
+        8. If suggesting restaurants or hotels, mention their approximate location or nearby attractions.
+        9. When providing directions or travel tips, keep them practical and easy to follow.
+        10. Always end with a friendly suggestion to explore more of Silchar!
+        11. If the user seems interested in a particular topic, suggest related places or activities in Silchar.
+        12. If the user asks for recommendations, provide at least 2-3 options with brief descriptions.
+        13. When discussing local culture or events, try to connect them to popular tourist attractions.
+        14. If discussing festivals or events, mention nearby places to visit or eat during those times.
+        15. When providing information about local cuisine, suggest nearby restaurants or food stalls.
+        16. If discussing local markets or shopping, mention nearby attractions or dining options.
+        17. When discussing transportation, mention nearby bus stops, taxi services, or ride-sharing options.
+        18. If discussing accommodation, suggest nearby attractions or amenities.
+        19. When providing information about local events or activities, suggest nearby places to visit or eat.
+        20. If the user asks about safety or travel tips, provide general advice while encouraging them to check local resources.
+        21. When providing information about local festivals or celebrations, suggest nearby places to visit or experience during those times.
+        22. If the user asks about local traditions or customs, connect them to nearby cultural sites or events.
+        23. If the user asks about local wildlife or nature, suggest nearby parks or nature spots to explore.
+        24. If the user asks about local handicrafts or souvenirs, suggest nearby markets or shops to visit.
+        25. If the user asks about local transportation options, suggest nearby stations or services.
+        26. If the user asks about local events or activities, suggest nearby places to visit or experience.
+        27. If the user asks about local guides or tour services, suggest nearby tour operators or guide services.
+        28. If the user asks about local photography spots, suggest nearby scenic locations or viewpoints.
+        29. If the user asks about local festivals or celebrations, suggest nearby places to visit or experience during those times.
+        30. If the user asks about local art or cultural experiences, suggest nearby galleries, museums, or cultural centers."""
 
     prompt_template = ChatPromptTemplate.from_messages(
         [
@@ -139,7 +183,7 @@ if google_api_key:
             st.markdown(message["content"])
 
     # User Input
-    if user_input := st.chat_input("Ask about Shani Bari, Bhairav Bari, etc."):
+    if user_input := st.chat_input("Ask Anything about Silchar's attractions and history (e.g., temples, colleges, forts, etc.) - try 'Tell me about Shani Bari' or 'What colleges are in Silchar?'"):
         st.session_state.messages.append({"role": "user", "content": user_input})
         with st.chat_message("user"):
             st.markdown(user_input)
