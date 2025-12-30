@@ -1,0 +1,6 @@
+streamlit==1.52.2
+langchain==0.1.19
+langchain-google-genai==0.0.5
+langchain-community==0.0.38
+chromadb==0.3.27
+

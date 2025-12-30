@@ -1,0 +1,154 @@
+import streamlit as st
+import os
+
+# Base LangChain and Google Imports
+from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+from langchain_community.vectorstores import Chroma
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.documents import Document
+
+# --- THE FIX: Import from the CLASSIC namespace ---
+from langchain_classic.chains.retrieval import create_retrieval_chain
+from langchain_classic.chains.combine_documents import create_stuff_documents_chain
+
+from dotenv import load_dotenv  # Import dotenv
+
+# --- 1. LOAD ENVIRONMENT VARIABLES ---
+load_dotenv()  # This looks for a .env file and loads its variables
+google_api_key = os.getenv("GOOGLE_API_KEY")
+
+# Safety check: if the key is missing from .env, show a warning
+if not google_api_key:
+    st.error("Missing Google API Key! Please add it to your .env file.")
+    st.stop()
+
+# Set the key for LangChain
+os.environ["GOOGLE_API_KEY"] = google_api_key
+
+
+# --- 1. CONFIGURATION & UI SETUP ---
+st.set_page_config(page_title="Silchar Tourism Guide", page_icon="🌴")
+st.title("🌴 Silchar Tourism AI Guide")
+st.markdown("Your personal travel assistant for the Barak Valley, Assam.")
+
+# Sidebar for API Key
+#google_api_key = st.sidebar.text_input("Enter Gemini API Key", type="password")
+
+if google_api_key:
+    os.environ["GOOGLE_API_KEY"] = google_api_key
+
+    # --- 2. KNOWLEDGE BASE (Your Data) ---
+    # In a real project, you can load this from a .txt or .pdf file
+    silchar_data = [
+        # --- CACHAR DISTRICT (Silchar & Surroundings) ---
+        "Bhuban Mahadev Temple: Located 50km from Silchar on Bhuban Hill. Built by Kachari King Lakshmi Chandra. It is the most celebrated Shiva temple in South Assam, featuring idols of Shiva and Parvati carved from solid rock. Thousands of 'Shivayats' trek 17km uphill during Mahashivaratri.",
+        "Kancha Kanti Devi Temple (Udharbond): 15km from Silchar. Dedicated to an amalgamation of Goddess Durga and Kali. Built in 1806 by the Kachari King. Historically, it was known for rituals until 1818; the modern structure was built in 1978. It symbolizes power and purity (Kancha means gold).",
+        "Khaspur (Dimasa Capital): 20km from Silchar. Ruins of the 1690 AD Dimasa Kachari Kingdom. Key features: The Lion Gate (Singhadwar), the Sun Gate (Suryadwar), and the King's Temple. The architecture is a unique blend of tribal Dimasa and Hindu styles with elephant-pattern entrances.",
+        "Maniharan Tunnel: Located in the Bhuvan Hills. Mythological significance: Lord Krishna is believed to have used this tunnel to visit the Tribeni River. Shrines of Rama, Lakshmana, and Hanuman are located at the entrance. Mentioned in the Mahabharata.",
+        "Shani Bari (Shani Mandir): Located in Janiganj, Silchar. A bustling spiritual hub where Saturday evenings involve massive crowds offering mustard oil and blue flowers. It is the heartbeat of Silchar's local religious life.",
+        "Bhairav Bari (Malugram): Dedicated to Lord Bhairav, the protector ('Kotwal') of the city. Locals visit here before starting new ventures to seek protection.",
+        "ISKCON Silchar: Situated in Ambicapatty. One of the best-built temples in the region, featuring exquisite marble idols of Radha-Krishna and hosting vibrant Janmashtami celebrations.",
+        "Dolu Lake: A serene natural spot surrounded by lush tea gardens. Ideal for nature lovers and birdwatching during the winter months.",
+        "Gandhibag Park: Located in the city center. It houses the Shahid Minar, a memorial for the 11 martyrs of the 1961 Language Movement, making it a site of both leisure and historical pride.",
+        "Sri Sri Radhaballabh Ashram (Shalganga): Located near Silchar Airport (Kumbhirgram). Founded by Prabhupad Sri Sri Braja Raman Goswami in 1950. It is a premier center of Vaishnavite culture and humanitarian service in the Barak Valley. he main temple houses Sri Sri Radha Ballabh, flanked by Sri Sri Durga Mata and Sri Sri Katyayanee Mata. It is also home to the sacred 'Jugal Kadamba' tree at Kalachand Tala, representing Sri Sri Rai Kalachand.",
+        "Sri Sri Shyamsundar Mandir (Tarapur): Located in Tula Patty, Tarapur, Silchar. It is one of the oldest and most revered Vaishnavite temples in the city, dedicated to Lord Shyamsundar (Krishna) and Radha. Famous for its grand celebration of the Rath Yatra (Festival of Chariots), where beautifully decorated chariots carry the deities through the streets of Silchar. It also hosts significant festivities during Janmashtami, Jhulan Yatra, and Dol Jatra (Holi).",
+        "Satsang Vihar (Anukul Thakur Ashram): A spiritual center dedicated to Sri Sri Thakur Anukulchandra, known for its peaceful environment and community service.",
+        "Hanuman Mandir (Tulapatty): Located on Tulapatty Road in the heart of Silchar's commercial hub. It is a vibrant community shrine dedicated to Lord Hanuman, serving as a spiritual anchor for local traders and residents. The temple is especially crowded on Tuesdays and Saturdays, known for its traditional morning and evening aartis that resonate through the busy market streets.",
+        "Shiv Bari (Malugram): A historic and highly revered Shiva temple in the Malugram area of Silchar, known for its spiritual significance and vibrant celebrations during Mahashivratri.",
+        "Silchar Airport (Kumbhirgram): The primary gateway to the Barak Valley, located about 22km from the city.",
+        "Silchar Railway Station: A major railhead connecting the region to the rest of India, located in the Tarapur area.",
+        "Goldighi Mall: The city's prominent shopping destination located in the heart of Silchar.",
+        "District Library: A key cultural and educational center for the community.",
+        "DSA Ground: The main sports stadium in Silchar, hosting cricket, football, and major local events.",
+        "India Club: One of the oldest and most prestigious social clubs in the city.",
+        "NIT Silchar: A premier technical institute of national importance located on the outskirts of the city.",
+        "GC College: A historic educational institution known for its academic heritage in the Barak Valley.",
+        "Silchar Medical College and Hospital (SMCH): The premier healthcare and medical education facility in the region.",
+        "Assam University: A central university located at Dargakona, known for its sprawling campus and diverse academic programs.",
+        "Women's College: A premier institution for women's education in Silchar, centrally located near Club Road.",
+        "Cachar College: One of the oldest colleges in the city, situated in the Trunk Road area and known for its historic academic standing."
+    
+        # --- KARIMGANJ DISTRICT ---
+
+        "Siddheshwar Shiva Temple (Badarpurghat): An ancient temple on the banks of the Barak River. It is a major center for the 'Baruni Mela' festival where thousands take a holy dip in the river.",
+        "Badarpur Fort: A Mughal-era fort situated on the banks of the Barak. It was a strategic military point and now serves as a key historical ruin for tourists.",
+        "Kal-Bhairab Bari (Karimganj): A sacred site in Banamali, Karimganj. Known for its fierce manifestation of Shiva and visited by those seeking spiritual strength.",
+        "Madan Mohan Akhra: Located in Karimganj Town. A premier Vaishnavite pilgrimage site where Lord Krishna is worshipped with traditional 'Kirtans'.",
+        "Ramakrishna Mission (Karimganj): A spiritual retreat and social service center following the teachings of Swami Vivekananda, known for its calm and meditative environment.",
+
+        # --- HAILAKANDI DISTRICT ---
+        "Siddeshwar Bari Sibmandir: Located near the Badarpur Ghat region on the Hailakandi side. A quiet, mist-wrapped temple known for spiritual reflection during winter mornings.",
+        "Pach Pirr Mukam: A sacred site on the southern side of Hailakandi dedicated to five revered saints, symbolizing the religious harmony of the Barak Valley.",
+        "Sonbeel (Hailakandi/Karimganj border): The largest wetland in Northeast India. Though not a temple, it is a spiritual experience for nature lovers, famous for its 'Shako' (wooden bridges) and sunset views.",
+        
+        # --- LOCAL TRAVEL TIPS ---
+        "Best Time to Visit: November to February is ideal for pleasant weather and festivals. Monsoon (June-August) offers lush greenery but makes hill treks like Bhuban Pahar difficult.",
+        "Local Food: Tourists must try 'Shilaer Shondesh' and local fish curry. Popular eateries include Hashtag Cafe and Shakahaar."
+    ]
+
+    # --- 3. RAG ENGINE (Processing Data) ---
+    # Turn text into Documents
+    docs = [Document(page_content=text) for text in silchar_data]
+    
+    # Split into chunks
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    splits = text_splitter.split_documents(docs)
+    
+    # Create Vector Database (In-Memory for this demo)
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
+    retriever = vectorstore.as_retriever()
+
+    # --- 4. MODERN RETRIEVAL CHAIN ---
+    # Setup the LLM
+    # OLD (Causes 404 error)
+    # llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.3)
+
+    # NEW (Correct for 2026)
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.3)
+
+    # Define the Prompt
+    system_prompt = (
+        "You are a friendly Silchar tourism guide. "
+        "Use the following pieces of retrieved context to answer the question. "
+        "If you don't know the answer, say that you don't know. "
+        "Keep the tone welcoming and helpful. "
+        "\n\n"
+        "{context}"
+    )
+
+    prompt_template = ChatPromptTemplate.from_messages(
+        [
+            ("system", system_prompt),
+            ("human", "{input}"),
+        ]
+    )
+
+    # Combine the steps into a RAG Chain
+    question_answer_chain = create_stuff_documents_chain(llm, prompt_template)
+    rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+
+    # --- 5. CHAT INTERFACE ---
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    # Display chat history
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    # User Input
+    if user_input := st.chat_input("Ask about Shani Bari, Bhairav Bari, etc."):
+        st.session_state.messages.append({"role": "user", "content": user_input})
+        with st.chat_message("user"):
+            st.markdown(user_input)
+
+        with st.chat_message("assistant"):
+            # The new rag_chain returns a dictionary with an "answer" key
+            response = rag_chain.invoke({"input": user_input})
+            st.markdown(response["answer"])
+            st.session_state.messages.append({"role": "assistant", "content": response["answer"]})
+
+else:
+    st.info("👋 Please enter your Gemini API Key in the sidebar to begin your journey through Silchar!")
