@@ -61,7 +61,9 @@ if google_api_key:
     "Bhairav Bari (Malugram): Dedicated to Lord Bhairav, the protector ('Kotwal') of the city.",
     "ISKCON Silchar: Situated in Ambicapatty. A beautifully built Radha-Krishna temple known for devotional chanting and Janmashtami celebrations.",
     "Dolu Lake: A serene natural spot surrounded by tea gardens. Ideal for nature lovers and birdwatching during winter.",
-    "Gandhibag Park & Shahid Minar: A green park located centrally in Silchar, home to the martyrs’ memorial of the 1961 Language Movement.",
+    "Gandhibag Park & Shahid Minar: A green park located centrally in Silchar, home to the martyrs’ memorial of the 1961 Language Movement. Gandhibag Park offers a tranquil escape amidst the bustling urban landscape. Named in honor of Mahatma Gandhi, this park is a verdant oasis that beckons visitors with its lush greenery and serene ambiance.",
+    "The park's focal point is the Shahid Minar, a poignant memorial dedicated to 11 martyrs who bravely fought for the preservation of the Bengali language.",
+    "Nestled along the Park Road beside a serene lake, Gandhibag Park is a popular spot for families and friends to unwind and rejuvenate.",
     "Sri Sri Radhaballabh Ashram (Shalganga): A premier Vaishnavite spiritual center founded in 1950, known for devotional practice and social service.",
     "Sri Sri Shyamsundar Mandir (Tarapur): A historic Krishna temple renowned for Rath Yatra and Janmashtami festivals.",
     "Satsang Vihar (Anukul Thakur Ashram): A peaceful spiritual center promoting meditation and community service.",
@@ -176,9 +178,11 @@ if google_api_key:
         # but exclude if it's a temple or tunnel with a lake in description
         is_nature = False
         
-        # Check for lake but exclude if it's a temple or tunnel
+        # Check for lake but exclude if it's a temple, tunnel, or Gandhibag Park
         if "lake" in entry_title_lower:
-            if "temple" not in entry_title_lower and "tunnel" not in entry_title_lower:
+            if ("temple" not in entry_title_lower and 
+                "tunnel" not in entry_title_lower and
+                "park" not in entry):
                 is_nature = True
         
         # Other nature keywords
