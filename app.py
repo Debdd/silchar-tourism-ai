@@ -98,6 +98,10 @@ if google_api_key:
     "Tarapur Railway Colony: A historic Anglo-Indian residential colony dating back to British times.",
     "Club Road Market: A bustling shopping and dining hub.",
     "Ambicapatty Market Area: A commercial center with eateries, shops, and local life.",
+    "Phatak Bazar (Silchar): A busy local bazar area known for daily shopping, small eateries, and general stores.",
+    "Janiganj Bazar: One of Silchar’s busiest market areas, popular for daily essentials, street snacks, and local shopping.",
+    "Tarapur Bazar: A neighborhood market area around Tarapur with everyday shopping and food options.",
+    "Malugram Bazar: A local market area serving nearby residential neighborhoods with daily essentials.",
     "Silchar Circuit House: A colonial-era government residence overlooking the town.",
     "Ranighat Area (Barak Riverside): A peaceful riverbank location for evening relaxation.",
     "Kabuganj Area: A rural escape with natural beauty outside Silchar town.",
@@ -208,7 +212,7 @@ if google_api_key:
         if "airport" in entry_lower or "railway station" in entry_lower or "station" in entry_lower:
             silchar_subcategories["transport"].append(entry)
 
-        if "mall" in entry_lower or "market" in entry_lower or "shopping" in entry_lower:
+        if "mall" in entry_lower or "market" in entry_lower or "shopping" in entry_lower or "bazar" in entry_lower or "bazaar" in entry_lower:
             silchar_subcategories["shopping"].append(entry)
 
         if "hospital" in entry_lower or "medical" in entry_lower:
@@ -322,6 +326,10 @@ if google_api_key:
                 "shopping": "shopping",
                 "market": "shopping",
                 "markets": "shopping",
+                "bazar": "shopping",
+                "bazaar": "shopping",
+                "bazars": "shopping",
+                "bazaars": "shopping",
                 "mall": "shopping",
                 "malls": "shopping",
                 "health": "healthcare",
