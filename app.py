@@ -449,6 +449,10 @@ if google_api_key:
                 "hill",
             }
 
+            # Initialize normalized_input
+            tokens = [t for t in user_input_lower.split() if t not in stopwords]
+            normalized_input = ' '.join(tokens)
+            
             matches_knowledge_base = False
             if normalized_input:
                 for entry in silchar_data:
