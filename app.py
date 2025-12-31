@@ -78,6 +78,11 @@ if google_api_key:
         "Assam University: A central university located at Dargakona, known for its sprawling campus and diverse academic programs.",
         "Women's College: A premier institution for women's education in Silchar, centrally located near Club Road.",
         "Cachar College: One of the oldest colleges in the city, situated in the Trunk Road area and known for its historic academic standing."
+        # --- ADD THIS TO YOUR silchar_data LIST ---
+        "S.M. Dev Civil Hospital (Silchar Civil Hospital): Located on Hospital Road, Ambicapatty. It is the oldest government hospital in the city and serves as the primary district hospital for Cachar. Known for its historical legacy, it was recently modernized to reduce the patient load on Silchar Medical College.",
+        "Civil Hospital Services: Provides 24/7 emergency services, maternity care, and specialized OPDs for general medicine, surgery, and pediatrics. It is a key center for government health schemes like Ayushman Bharat.",
+        "Historical Context: The hospital served as the primary teaching hospital for Silchar Medical College students from 1971 until the main college campus hospital was commissioned in 1977.",
+        "Location Advantage: Being centrally located in Ambicapatty, it is the most accessible government healthcare facility for residents of the main town area, unlike SMCH which is 6km away.",
     
         # --- KARIMGANJ DISTRICT ---
 
@@ -128,27 +133,8 @@ if google_api_key:
         8. If suggesting restaurants or hotels, mention their approximate location or nearby attractions.
         9. When providing directions or travel tips, keep them practical and easy to follow.
         10. Always end with a friendly suggestion to explore more of Silchar!
-        11. If the user seems interested in a particular topic, suggest related places or activities in Silchar.
-        12. If the user asks for recommendations, provide at least 2-3 options with brief descriptions.
-        13. When discussing local culture or events, try to connect them to popular tourist attractions.
-        14. If discussing festivals or events, mention nearby places to visit or eat during those times.
-        15. When providing information about local cuisine, suggest nearby restaurants or food stalls.
-        16. If discussing local markets or shopping, mention nearby attractions or dining options.
-        17. When discussing transportation, mention nearby bus stops, taxi services, or ride-sharing options.
-        18. If discussing accommodation, suggest nearby attractions or amenities.
-        19. When providing information about local events or activities, suggest nearby places to visit or eat.
-        20. If the user asks about safety or travel tips, provide general advice while encouraging them to check local resources.
-        21. When providing information about local festivals or celebrations, suggest nearby places to visit or experience during those times.
-        22. If the user asks about local traditions or customs, connect them to nearby cultural sites or events.
-        23. If the user asks about local wildlife or nature, suggest nearby parks or nature spots to explore.
-        24. If the user asks about local handicrafts or souvenirs, suggest nearby markets or shops to visit.
-        25. If the user asks about local transportation options, suggest nearby stations or services.
-        26. If the user asks about local events or activities, suggest nearby places to visit or experience.
-        27. If the user asks about local guides or tour services, suggest nearby tour operators or guide services.
-        28. If the user asks about local photography spots, suggest nearby scenic locations or viewpoints.
-        29. If the user asks about local festivals or celebrations, suggest nearby places to visit or experience during those times.
-        30. If the user asks about local art or cultural experiences, suggest nearby galleries, museums, or cultural centers."""
-
+    """
+    
     prompt_template = ChatPromptTemplate.from_messages(
         [
             ("system", system_prompt),
@@ -224,6 +210,7 @@ if google_api_key:
 
             if is_unclear:
                 answer = (
+                    f"{GENERAL_SILCHAR_INFO}\n\n"
                     "Here’s a quick overview of Silchar to get you started:\n\n"
                     "1) Top places to visit: ISKCON Temple, Gandhibagh Park, Sadarghat riverfront (Barak),"
                     " Bhuban Hill (nearby), and local markets in the central town area.\n\n"
