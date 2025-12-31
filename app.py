@@ -51,56 +51,76 @@ if google_api_key:
     # --- 2. KNOWLEDGE BASE (Your Data) ---
     # In a real project, you can load this from a .txt or .pdf file
     silchar_data = [
-        # --- CACHAR DISTRICT (Silchar & Surroundings) ---
-        "Bhuban Mahadev Temple: Located 50km from Silchar on Bhuban Hill. Built by Kachari King Lakshmi Chandra. It is the most celebrated Shiva temple in South Assam, featuring idols of Shiva and Parvati carved from solid rock. Thousands of 'Shivayats' trek 17km uphill during Mahashivaratri.",
-        "Kancha Kanti Devi Temple (Udharbond): 15km from Silchar. Dedicated to an amalgamation of Goddess Durga and Kali. Built in 1806 by the Kachari King. Historically, it was known for rituals until 1818; the modern structure was built in 1978. It symbolizes power and purity (Kancha means gold).",
-        "Khaspur (Dimasa Capital): 20km from Silchar. Ruins of the 1690 AD Dimasa Kachari Kingdom. Key features: The Lion Gate (Singhadwar), the Sun Gate (Suryadwar), and the King's Temple. The architecture is a unique blend of tribal Dimasa and Hindu styles with elephant-pattern entrances.",
-        "Maniharan Tunnel: Located in the Bhuvan Hills. Mythological significance: Lord Krishna is believed to have used this tunnel to visit the Tribeni River. Shrines of Rama, Lakshmana, and Hanuman are located at the entrance. Mentioned in the Mahabharata.",
-        "Shani Bari (Shani Mandir): Located in Janiganj, Silchar. A bustling spiritual hub where Saturday evenings involve massive crowds offering mustard oil and blue flowers. It is the heartbeat of Silchar's local religious life.",
-        "Bhairav Bari (Malugram): Dedicated to Lord Bhairav, the protector ('Kotwal') of the city. Locals visit here before starting new ventures to seek protection.",
-        "ISKCON Silchar: Situated in Ambicapatty. One of the best-built temples in the region, featuring exquisite marble idols of Radha-Krishna and hosting vibrant Janmashtami celebrations.",
-        "Dolu Lake: A serene natural spot surrounded by lush tea gardens. Ideal for nature lovers and birdwatching during the winter months.",
-        "Gandhibag Park: Located in the city center. It houses the Shahid Minar, a memorial for the 11 martyrs of the 1961 Language Movement, making it a site of both leisure and historical pride.",
-        "Sri Sri Radhaballabh Ashram (Shalganga): Located near Silchar Airport (Kumbhirgram). Founded by Prabhupad Sri Sri Braja Raman Goswami in 1950. It is a premier center of Vaishnavite culture and humanitarian service in the Barak Valley. he main temple houses Sri Sri Radha Ballabh, flanked by Sri Sri Durga Mata and Sri Sri Katyayanee Mata. It is also home to the sacred 'Jugal Kadamba' tree at Kalachand Tala, representing Sri Sri Rai Kalachand.",
-        "Sri Sri Shyamsundar Mandir (Tarapur): Located in Tula Patty, Tarapur, Silchar. It is one of the oldest and most revered Vaishnavite temples in the city, dedicated to Lord Shyamsundar (Krishna) and Radha. Famous for its grand celebration of the Rath Yatra (Festival of Chariots), where beautifully decorated chariots carry the deities through the streets of Silchar. It also hosts significant festivities during Janmashtami, Jhulan Yatra, and Dol Jatra (Holi).",
-        "Satsang Vihar (Anukul Thakur Ashram): A spiritual center dedicated to Sri Sri Thakur Anukulchandra, known for its peaceful environment and community service.",
-        "Hanuman Mandir (Tulapatty): Located on Tulapatty Road in the heart of Silchar's commercial hub. It is a vibrant community shrine dedicated to Lord Hanuman, serving as a spiritual anchor for local traders and residents. The temple is especially crowded on Tuesdays and Saturdays, known for its traditional morning and evening aartis that resonate through the busy market streets.",
-        "Shiv Bari (Malugram): A historic and highly revered Shiva temple in the Malugram area of Silchar, known for its spiritual significance and vibrant celebrations during Mahashivratri.",
-        "Silchar Airport (Kumbhirgram): The primary gateway to the Barak Valley, located about 22km from the city.",
-        "Silchar Railway Station: A major railhead connecting the region to the rest of India, located in the Tarapur area.",
-        "Goldighi Mall: The city's prominent shopping destination located in the heart of Silchar.",
-        "District Library: A key cultural and educational center for the community.",
-        "DSA Ground: The main sports stadium in Silchar, hosting cricket, football, and major local events.",
-        "India Club: One of the oldest and most prestigious social clubs in the city.",
-        "NIT Silchar: A premier technical institute of national importance located on the outskirts of the city.",
-        "GC College: A historic educational institution known for its academic heritage in the Barak Valley.",
-        "Silchar Medical College and Hospital (SMCH): The premier healthcare and medical education facility in the region.",
-        "Assam University: A central university located at Dargakona, known for its sprawling campus and diverse academic programs.",
-        "Women's College: A premier institution for women's education in Silchar, centrally located near Club Road.",
-        "Cachar College: One of the oldest colleges in the city, situated in the Trunk Road area and known for its historic academic standing.",
-        # --- ADD THIS TO YOUR silchar_data LIST ---
-        "S.M. Dev Civil Hospital (Silchar Civil Hospital): Located on Hospital Road, Ambicapatty. It is the oldest government hospital in the city and serves as the primary district hospital for Cachar. Known for its historical legacy, it was recently modernized to reduce the patient load on Silchar Medical College.",
-        "Civil Hospital Services: Provides 24/7 emergency services, maternity care, and specialized OPDs for general medicine, surgery, and pediatrics. It is a key center for government health schemes like Ayushman Bharat.",
-        "Historical Context: The hospital served as the primary teaching hospital for Silchar Medical College students from 1971 until the main college campus hospital was commissioned in 1977.",
-        "Location Advantage: Being centrally located in Ambicapatty, it is the most accessible government healthcare facility for residents of the main town area, unlike SMCH which is 6km away.",
-    
-        # --- KARIMGANJ DISTRICT ---
+    # --- CACHAR DISTRICT (Silchar & Surroundings) ---
+    "Bhuban Mahadev Temple: Located 50km from Silchar on Bhuban Hill. Built by Kachari King Lakshmi Chandra. It is the most celebrated Shiva temple in South Assam, featuring idols of Shiva and Parvati carved from solid rock. Thousands of 'Shivayats' trek 17km uphill during Mahashivaratri.",
+    "Kancha Kanti Devi Temple (Udharbond): 15km from Silchar. Dedicated to an amalgamation of Goddess Durga and Kali. Built in 1806 by the Kachari King. Historically, it was known for rituals until 1818; the modern structure was built in 1978. It symbolizes power and purity (Kancha means gold).",
+    "Khaspur (Dimasa Capital): 20km from Silchar. Ruins of the 1690 AD Dimasa Kachari Kingdom. Key features: The Lion Gate (Singhadwar), the Sun Gate (Suryadwar), and the King's Temple. The architecture is a unique blend of tribal Dimasa and Hindu styles with elephant-pattern entrances.",
+    "Maniharan Tunnel: Located in the Bhuvan Hills. Mythological significance: Lord Krishna is believed to have used this tunnel to visit the Tribeni River. Shrines of Rama, Lakshmana, and Hanuman are located at the entrance. Mentioned in the Mahabharata.",
+    "Shani Bari (Shani Mandir): Located in Janiganj, Silchar. A bustling spiritual hub where Saturday evenings involve massive crowds offering mustard oil and blue flowers.",
+    "Bhairav Bari (Malugram): Dedicated to Lord Bhairav, the protector ('Kotwal') of the city.",
+    "ISKCON Silchar: Situated in Ambicapatty. A beautifully built Radha-Krishna temple known for devotional chanting and Janmashtami celebrations.",
+    "Dolu Lake: A serene natural spot surrounded by tea gardens. Ideal for nature lovers and birdwatching during winter.",
+    "Gandhibag Park & Shahid Minar: A green park located centrally in Silchar, home to the martyrs’ memorial of the 1961 Language Movement.",
+    "Sri Sri Radhaballabh Ashram (Shalganga, near Airport): A premier Vaishnavite spiritual center founded in 1950, known for devotional practice and social service.",
+    "Sri Sri Shyamsundar Mandir (Tarapur): A historic Krishna temple renowned for Rath Yatra and Janmashtami festivals.",
+    "Satsang Vihar (Anukul Thakur Ashram): A peaceful spiritual center promoting meditation and community service.",
+    "Hanuman Mandir (Tulapatty): A popular shrine in the market heart of Silchar, especially crowded on Tuesdays and Saturdays.",
+    "Shiv Bari (Malugram): A revered Shiva temple known for strong spiritual devotion.",
+    "NIT Silchar: A premier national engineering institute located on the outskirts of Silchar.",
+    "Assam University (Dargakona): A central university known for its scenic green campus.",
+    "GC College: A historic institution of higher learning in the Barak Valley.",
+    "Women’s College: A leading women's education center in central Silchar.",
+    "Cachar College: One of Silchar’s oldest and most respected colleges.",
+    "Silchar Medical College & Hospital (SMCH): The largest healthcare and medical education facility in Barak Valley.",
+    "S.M. Dev Civil Hospital: The oldest government hospital in central Silchar, serving as the primary district hospital.",
+    "DSA Ground: The main sports stadium of Silchar, hosting cricket and football tournaments.",
+    "India Club: A prestigious social and sports club known for tennis, cricket, and community gatherings.",
+    "Silchar Airport (Kumbhirgram): The main air gateway to the Barak Valley region.",
+    "Silchar Railway Station: A key rail link connecting Barak Valley to the rest of India.",
+    "Goldighi Mall: The primary shopping and entertainment mall in Silchar.",
 
-        "Siddheshwar Shiva Temple (Badarpurghat): An ancient temple on the banks of the Barak River. It is a major center for the 'Baruni Mela' festival where thousands take a holy dip in the river.",
-        "Badarpur Fort: A Mughal-era fort situated on the banks of the Barak. It was a strategic military point and now serves as a key historical ruin for tourists.",
-        "Kal-Bhairab Bari (Karimganj): A sacred site in Banamali, Karimganj. Known for its fierce manifestation of Shiva and visited by those seeking spiritual strength.",
-        "Madan Mohan Akhra: Located in Karimganj Town. A premier Vaishnavite pilgrimage site where Lord Krishna is worshipped with traditional 'Kirtans'.",
-        "Ramakrishna Mission (Karimganj): A spiritual retreat and social service center following the teachings of Swami Vivekananda, known for its calm and meditative environment.",
+    # --- NEW CACHAR / SILCHAR LANDMARKS ---
+    "Satindra Mohan Dev Stadium: A major sports and cultural venue in Silchar hosting regional tournaments and public events.",
+    "District Museum, Silchar: Preserves artifacts and history of Barak Valley culture, tribes, and colonial era.",
+    "Language Martyrs’ Memorial Stone (Shahid Bedi): Dedicated to the 11 martyrs of the 1961 Bengali Language Movement.",
+    "Kurbantilla Mosque: One of the oldest mosques in Silchar, representing the region’s multicultural heritage.",
+    "Govinda Mandir (Tarapur): A serene Krishna temple known for devotional music and festivals.",
+    "Bharatiya Vidya Bhavan Silchar: A cultural and educational institute promoting Indian heritage.",
+    "Kalyani Sweets Area (Tarapur Market): A locally famous food hub known for mithai and snacks.",
+    "Banskandi Hala Hanuman Temple: A popular spiritual destination near Silchar.",
+    "Banskandi Madrasa (Islamic Theological Institute): A historic Islamic study center of Northeast India.",
+    "Tea Gardens around Silchar: Scenic plantation belts offering rural landscape views.",
+    "Udharbond Tea Estate: A picturesque tea garden near Silchar, popular for drives.",
+    "Srikona Army Cantonment Area Viewpoints: Known for scenic countryside landscapes.",
+    "Dargakona Lake: A peaceful waterbody near Assam University surrounded by hills.",
+    "Barak River Ghats (Silchar): Scenic riverside viewpoints popular for evening walks.",
+    "Tarapur Railway Colony: A historic Anglo-Indian residential colony dating back to British times.",
+    "Club Road Market: A bustling shopping and dining hub.",
+    "Ambicapatty Market Area: A commercial center with eateries, shops, and local life.",
+    "Silchar Circuit House: A colonial-era government residence overlooking the town.",
+    "Ranighat Area (Barak Riverside): A peaceful riverbank location for evening relaxation.",
+    "Kabuganj Area: A rural escape with natural beauty outside Silchar town.",
+    "Bhangarpar and Kalain Region: Known for countryside scenery and agricultural fields.",
+    "Lakhisahar Area: A growing suburban locality with temples and community centers.",
 
-        # --- HAILAKANDI DISTRICT ---
-        "Siddeshwar Bari Sibmandir: Located near the Badarpur Ghat region on the Hailakandi side. A quiet, mist-wrapped temple known for spiritual reflection during winter mornings.",
-        "Pach Pirr Mukam: A sacred site on the southern side of Hailakandi dedicated to five revered saints, symbolizing the religious harmony of the Barak Valley.",
-        "Sonbeel (Hailakandi/Karimganj border): The largest wetland in Northeast India. Though not a temple, it is a spiritual experience for nature lovers, famous for its 'Shako' (wooden bridges) and sunset views.",
-        
-        # --- LOCAL TRAVEL TIPS ---
-        "Best Time to Visit: November to February is ideal for pleasant weather and festivals. Monsoon (June-August) offers lush greenery but makes hill treks like Bhuban Pahar difficult.",
-        "Local Food: Tourists must try 'Shilaer Shondesh' and local fish curry. Popular eateries include Hashtag Cafe and Shakahaar."
-    ]
+    # --- KARIMGANJ DISTRICT ---
+    "Siddheshwar Shiva Temple (Badarpurghat): A sacred Shiva temple famous for the Baruni Mela holy dip.",
+    "Badarpur Fort: A Mughal-era riverside fort overlooking the Barak River.",
+    "Madan Mohan Akhra (Karimganj Town): A major Vaishnavite pilgrimage site known for devotional chanting.",
+    "Ramakrishna Mission (Karimganj): A peaceful spiritual and social service center inspired by Swami Vivekananda.",
+    "Longai River Banks: A scenic relaxation spot in Karimganj town.",
+
+    # --- HAILAKANDI DISTRICT ---
+    "Siddeshwar Bari Shiv Mandir: A peaceful hillside temple ideal for meditation and devotion.",
+    "Pach Pirr Mukam: A sacred site honoring five revered saints symbolizing religious harmony.",
+    "Sonbeel: The largest wetland in Northeast India, famed for stunning sunset reflections on the water.",
+
+    # --- TRAVEL TIPS ---
+    "Best Time to Visit: November to February for pleasant weather, festivals, and outdoor sightseeing.",
+    "Monsoon Advisory: Trekking to hill temples like Bhuban Pahar becomes challenging during June–August.",
+    "Local Food Must-Try: Shilaer Shondesh, local fish curries, sweets, and tea from valley plantations."
+]
+
 
     silchar_subcategories = {
         "religious": [],
