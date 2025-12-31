@@ -170,7 +170,7 @@ if google_api_key:
             st.markdown(message["content"])
 
     # User Input
-    if user_input := st.chat_input("Ask Anything about Silchar's attractions and history (e.g., temples, colleges, forts, etc.) - try 'Tell me about Shani Bari' or 'What colleges are in Silchar?'"):
+    if user_input := st.chat_input("Ask Anything about Silchar's attractions and history (e.g., temples, colleges, forts, etc.)"):
         st.session_state.messages.append({"role": "user", "content": user_input})
         with st.chat_message("user"):
             st.markdown(user_input)
