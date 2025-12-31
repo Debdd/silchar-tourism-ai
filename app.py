@@ -177,12 +177,16 @@ if google_api_key:
 
         with st.chat_message("assistant"):
             normalized_input = " ".join(user_input.strip().lower().split())
+            first_word = normalized_input.split(" ", 1)[0] if normalized_input else ""
             is_unclear = (
                 len(normalized_input) < 10
-                or normalized_input in {"hi", "hello", "hey", "hii", "hlo", "help", "info", "information"}
+                or first_word in {"hi", "hello", "hey", "hii", "hlo"}
+                or "help" in normalized_input
+                or "information" in normalized_input
+                or normalized_input in {"silchar", "silchar?"}
+                or normalized_input.endswith(" about silchar")
                 or normalized_input.startswith("tell me about silchar")
                 or normalized_input.startswith("about silchar")
-                or normalized_input in {"silchar", "silchar?"}
             )
 
             if is_unclear:
