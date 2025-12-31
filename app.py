@@ -212,7 +212,13 @@ if google_api_key:
         if "airport" in entry_lower or "railway station" in entry_lower or "station" in entry_lower:
             silchar_subcategories["transport"].append(entry)
 
-        if "mall" in entry_lower or "market" in entry_lower or "shopping" in entry_lower or "bazar" in entry_lower or "bazaar" in entry_lower:
+        # Shopping: match only on the title to avoid false positives from descriptions (e.g., temples near a market)
+        if (
+            "mall" in entry_title_lower
+            or "market" in entry_title_lower
+            or "bazar" in entry_title_lower
+            or "bazaar" in entry_title_lower
+        ):
             silchar_subcategories["shopping"].append(entry)
 
         if "hospital" in entry_lower or "medical" in entry_lower:
