@@ -330,11 +330,11 @@ if google_api_key:
                     'show me all about silchar',
                     'all about silchar',
                     'complete information about silchar',
-                    'full details about silchar'
-                    'silchar information'
-                    'silchar details'
-                    'silchar info'
-                    'silchar'
+                    'full details about silchar',
+                    'silchar information',
+                    'silchar details',
+                    'silchar info',
+                    'silchar',
                 ]
                 
                 # Check if the query is a general request for information about Silchar
