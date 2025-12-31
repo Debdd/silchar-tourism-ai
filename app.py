@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import re
 
 # Base LangChain and Google Imports
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
@@ -191,10 +192,15 @@ if google_api_key:
             silchar_subcategories["historical"].append(entry)
 
         if (
-            "college" in entry_lower
-            or "university" in entry_lower
-            or "nit" in entry_lower
-            or "institute" in entry_lower
+            (
+                "college" in entry_lower
+                or "university" in entry_lower
+                or "school" in entry_lower
+                or "institute" in entry_lower
+                or re.search(r"\bnit\b", entry_lower)
+            )
+            and "ashram" not in entry_lower
+            and "vihar" not in entry_lower
         ):
             silchar_subcategories["education"].append(entry)
 
