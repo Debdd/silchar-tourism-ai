@@ -260,6 +260,19 @@ if google_api_key:
         ]
     )
 
+    unclear_prompt_template = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a helpful Silchar Tourism Assistant. The user message is unclear or too short. "
+                "Use the provided GENERAL_SILCHAR_INFO to give a brief helpful overview, then ask 1-2 clarifying questions "
+                "to understand what they want (places, food, history, travel, shopping, hospitals, colleges, etc.). "
+                "Keep it concise and tourist-friendly.",
+            ),
+            ("human", "GENERAL_SILCHAR_INFO:\n{general_info}\n\nUser message:\n{input}"),
+        ]
+    )
+
     # Combine the steps into a RAG Chain
     question_answer_chain = create_stuff_documents_chain(llm, prompt_template)
     rag_chain = create_retrieval_chain(retriever, question_answer_chain)
@@ -387,19 +400,12 @@ if google_api_key:
             )
 
             if is_unclear:
-                answer = (
-                    f"{GENERAL_SILCHAR_INFO}\n\n"
-                    "Here’s a quick overview of Silchar to get you started:\n\n"
-                    "1) Top places to visit: ISKCON Temple, Gandhibagh Park, Sadarghat riverfront (Barak),"
-                    " Bhuban Hill (nearby), and local markets in the central town area.\n\n"
-                    "2) Local food to try: Bengali-style dishes, local sweets, and street snacks"
-                    " around busy market areas.\n\n"
-                    "3) Best time to visit: October to March for more comfortable weather.\n\n"
-                    "4) Getting around: short rides by auto-rickshaw/taxi within town; ask for the nearest"
-                    " landmark if you’re unsure.\n\n"
-                    "Tell me what you’re interested in (temples, history, colleges, food, nature, shopping),"
-                    " and I’ll tailor recommendations."
+                unclear_messages = unclear_prompt_template.format_messages(
+                    input=user_input,
+                    general_info=GENERAL_SILCHAR_INFO,
                 )
+                unclear_response = llm.invoke(unclear_messages)
+                answer = getattr(unclear_response, "content", str(unclear_response))
             else:
                 # The new rag_chain returns a dictionary with an "answer" key
                 response = rag_chain.invoke({"input": user_input})
