@@ -424,15 +424,15 @@ if google_api_key:
                         if first_word in category_aliases:
                             requested_category = category_aliases[first_word]
 
-            if requested_category and requested_category in silchar_subcategories:
-                items = silchar_subcategories[requested_category]
-                if items:
-                    answer = "\n".join([f"- {i}" for i in items])
-                else:
-                    answer = "No items found for that category yet."
-                st.markdown(answer)
-                st.session_state.messages.append({"role": "assistant", "content": answer})
-                st.stop()
+                if requested_category and requested_category in silchar_subcategories:
+                    items = silchar_subcategories[requested_category]
+                    if items:
+                        answer = "\n".join([f"- {i}" for i in items])
+                    else:
+                        answer = "No items found for that category yet."
+                    st.markdown(answer)
+                    st.session_state.messages.append({"role": "assistant", "content": answer})
+                    st.stop()
             location_hint_tokens = {
                 "lake",
                 "temple",
