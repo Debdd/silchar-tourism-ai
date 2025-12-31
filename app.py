@@ -165,7 +165,8 @@ if google_api_key:
             or "iskcon" in entry_lower
         ):
             silchar_subcategories["religious"].append(entry)
-        elif (
+
+        if (
             "lake" in entry_lower
             or "park" in entry_lower
             or "hill" in entry_lower
@@ -174,7 +175,8 @@ if google_api_key:
             or "garden" in entry_lower
         ):
             silchar_subcategories["nature"].append(entry)
-        elif (
+
+        if (
             "ruins" in entry_lower
             or "fort" in entry_lower
             or "capital" in entry_lower
@@ -187,20 +189,25 @@ if google_api_key:
             or "histor" in entry_lower
         ):
             silchar_subcategories["historical"].append(entry)
-        elif (
+
+        if (
             "college" in entry_lower
             or "university" in entry_lower
             or "nit" in entry_lower
             or "institute" in entry_lower
         ):
             silchar_subcategories["education"].append(entry)
-        elif "airport" in entry_lower or "railway station" in entry_lower or "station" in entry_lower:
+
+        if "airport" in entry_lower or "railway station" in entry_lower or "station" in entry_lower:
             silchar_subcategories["transport"].append(entry)
-        elif "mall" in entry_lower or "market" in entry_lower or "shopping" in entry_lower:
+
+        if "mall" in entry_lower or "market" in entry_lower or "shopping" in entry_lower:
             silchar_subcategories["shopping"].append(entry)
-        elif "hospital" in entry_lower or "medical" in entry_lower:
+
+        if "hospital" in entry_lower or "medical" in entry_lower:
             silchar_subcategories["healthcare"].append(entry)
-        elif "club" in entry_lower or "library" in entry_lower or "ground" in entry_lower:
+
+        if "club" in entry_lower or "library" in entry_lower or "ground" in entry_lower:
             silchar_subcategories["city_life"].append(entry)
 
         if current_district == "travel_tips" or "best time" in entry_lower or "local food" in entry_lower:
