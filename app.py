@@ -178,8 +178,33 @@ if google_api_key:
         with st.chat_message("assistant"):
             normalized_input = " ".join(user_input.strip().lower().split())
             first_word = normalized_input.split(" ", 1)[0] if normalized_input else ""
+            tokens = [t for t in normalized_input.split(" ") if t]
+            location_hint_tokens = {
+                "lake",
+                "temple",
+                "mandir",
+                "park",
+                "college",
+                "university",
+                "airport",
+                "station",
+                "fort",
+                "market",
+                "river",
+                "garden",
+                "hill",
+            }
+            place_aliases = {
+                "dolu",
+            }
+            looks_like_place_query = (
+                len(tokens) >= 2
+                or any(t in location_hint_tokens for t in tokens)
+                or (len(tokens) == 1 and tokens[0] in place_aliases)
+                or "?" in normalized_input
+            )
             is_unclear = (
-                len(normalized_input) < 10
+                (len(normalized_input) < 10 and not looks_like_place_query)
                 or first_word in {"hi", "hello", "hey", "hii", "hlo"}
                 or "help" in normalized_input
                 or "information" in normalized_input
