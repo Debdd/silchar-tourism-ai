@@ -152,7 +152,7 @@ if google_api_key:
     prompt_template = ChatPromptTemplate.from_messages(
         [
             ("system", system_prompt),
-            ("human", "{input}"),
+            ("human", "Context:\n{context}\n\nQuestion:\n{input}"),
         ]
     )
 
