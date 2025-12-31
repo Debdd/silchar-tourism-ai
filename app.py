@@ -77,7 +77,7 @@ if google_api_key:
         "Silchar Medical College and Hospital (SMCH): The premier healthcare and medical education facility in the region.",
         "Assam University: A central university located at Dargakona, known for its sprawling campus and diverse academic programs.",
         "Women's College: A premier institution for women's education in Silchar, centrally located near Club Road.",
-        "Cachar College: One of the oldest colleges in the city, situated in the Trunk Road area and known for its historic academic standing."
+        "Cachar College: One of the oldest colleges in the city, situated in the Trunk Road area and known for its historic academic standing.",
         # --- ADD THIS TO YOUR silchar_data LIST ---
         "S.M. Dev Civil Hospital (Silchar Civil Hospital): Located on Hospital Road, Ambicapatty. It is the oldest government hospital in the city and serves as the primary district hospital for Cachar. Known for its historical legacy, it was recently modernized to reduce the patient load on Silchar Medical College.",
         "Civil Hospital Services: Provides 24/7 emergency services, maternity care, and specialized OPDs for general medicine, surgery, and pediatrics. It is a key center for government health schemes like Ayushman Bharat.",
@@ -101,6 +101,90 @@ if google_api_key:
         "Best Time to Visit: November to February is ideal for pleasant weather and festivals. Monsoon (June-August) offers lush greenery but makes hill treks like Bhuban Pahar difficult.",
         "Local Food: Tourists must try 'Shilaer Shondesh' and local fish curry. Popular eateries include Hashtag Cafe and Shakahaar."
     ]
+
+    silchar_subcategories = {
+        "religious": [],
+        "nature": [],
+        "historical": [],
+        "education": [],
+        "transport": [],
+        "shopping": [],
+        "healthcare": [],
+        "city_life": [],
+        "travel_tips": [],
+        "cachar": [],
+        "karimganj": [],
+        "hailakandi": [],
+    }
+
+    current_district = "cachar"
+    for entry in silchar_data:
+        entry_lower = entry.lower()
+
+        if "karimganj" in entry_lower and "district" in entry_lower:
+            current_district = "karimganj"
+            continue
+        if "hailakandi" in entry_lower and "district" in entry_lower:
+            current_district = "hailakandi"
+            continue
+        if "local travel tips" in entry_lower:
+            current_district = "travel_tips"
+            continue
+
+        if current_district in {"cachar", "karimganj", "hailakandi"}:
+            silchar_subcategories[current_district].append(entry)
+
+        if (
+            "temple" in entry_lower
+            or "mandir" in entry_lower
+            or "bari" in entry_lower
+            or "ashram" in entry_lower
+            or "mission" in entry_lower
+            or "mukam" in entry_lower
+            or "akhra" in entry_lower
+            or "iskcon" in entry_lower
+        ):
+            silchar_subcategories["religious"].append(entry)
+        elif (
+            "lake" in entry_lower
+            or "park" in entry_lower
+            or "hill" in entry_lower
+            or "wetland" in entry_lower
+            or "tea" in entry_lower
+            or "garden" in entry_lower
+        ):
+            silchar_subcategories["nature"].append(entry)
+        elif (
+            "ruins" in entry_lower
+            or "fort" in entry_lower
+            or "capital" in entry_lower
+            or "tunnel" in entry_lower
+            or "gate" in entry_lower
+            or "king" in entry_lower
+            or "mughal" in entry_lower
+            or "myth" in entry_lower
+            or "mythological" in entry_lower
+            or "histor" in entry_lower
+        ):
+            silchar_subcategories["historical"].append(entry)
+        elif (
+            "college" in entry_lower
+            or "university" in entry_lower
+            or "nit" in entry_lower
+            or "institute" in entry_lower
+        ):
+            silchar_subcategories["education"].append(entry)
+        elif "airport" in entry_lower or "railway station" in entry_lower or "station" in entry_lower:
+            silchar_subcategories["transport"].append(entry)
+        elif "mall" in entry_lower or "market" in entry_lower or "shopping" in entry_lower:
+            silchar_subcategories["shopping"].append(entry)
+        elif "hospital" in entry_lower or "medical" in entry_lower:
+            silchar_subcategories["healthcare"].append(entry)
+        elif "club" in entry_lower or "library" in entry_lower or "ground" in entry_lower:
+            silchar_subcategories["city_life"].append(entry)
+
+        if current_district == "travel_tips" or "best time" in entry_lower or "local food" in entry_lower:
+            silchar_subcategories["travel_tips"].append(entry)
 
     # --- 3. RAG ENGINE (Processing Data) ---
     # Turn text into Documents
@@ -165,6 +249,66 @@ if google_api_key:
             normalized_input = " ".join(user_input.strip().lower().split())
             first_word = normalized_input.split(" ", 1)[0] if normalized_input else ""
             tokens = [t for t in normalized_input.split(" ") if t]
+
+            category_aliases = {
+                "temple": "religious",
+                "temples": "religious",
+                "religious": "religious",
+                "nature": "nature",
+                "parks": "nature",
+                "park": "nature",
+                "lakes": "nature",
+                "lake": "nature",
+                "hills": "nature",
+                "hill": "nature",
+                "history": "historical",
+                "historical": "historical",
+                "education": "education",
+                "colleges": "education",
+                "college": "education",
+                "universities": "education",
+                "university": "education",
+                "transport": "transport",
+                "travel": "travel_tips",
+                "tips": "travel_tips",
+                "food": "travel_tips",
+                "shopping": "shopping",
+                "market": "shopping",
+                "markets": "shopping",
+                "mall": "shopping",
+                "malls": "shopping",
+                "health": "healthcare",
+                "hospital": "healthcare",
+                "hospitals": "healthcare",
+                "healthcare": "healthcare",
+                "city": "city_life",
+                "clubs": "city_life",
+                "district": None,
+                "cachar": "cachar",
+                "karimganj": "karimganj",
+                "hailakandi": "hailakandi",
+            }
+
+            requested_category = None
+            if normalized_input in silchar_subcategories:
+                requested_category = normalized_input
+            elif first_word in category_aliases and category_aliases[first_word]:
+                requested_category = category_aliases[first_word]
+            else:
+                for t in tokens:
+                    if t in category_aliases and category_aliases[t]:
+                        requested_category = category_aliases[t]
+                        break
+
+            if requested_category and requested_category in silchar_subcategories:
+                items = silchar_subcategories[requested_category]
+                if items:
+                    answer = "\n".join([f"- {i}" for i in items])
+                else:
+                    answer = "No items found for that category yet."
+                st.markdown(answer)
+                st.session_state.messages.append({"role": "assistant", "content": answer})
+                st.stop()
             location_hint_tokens = {
                 "lake",
                 "temple",
