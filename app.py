@@ -176,10 +176,35 @@ if google_api_key:
             st.markdown(user_input)
 
         with st.chat_message("assistant"):
-            # The new rag_chain returns a dictionary with an "answer" key
-            response = rag_chain.invoke({"input": user_input})
-            st.markdown(response["answer"])
-            st.session_state.messages.append({"role": "assistant", "content": response["answer"]})
+            normalized_input = " ".join(user_input.strip().lower().split())
+            is_unclear = (
+                len(normalized_input) < 10
+                or normalized_input in {"hi", "hello", "hey", "hii", "hlo", "help", "info", "information"}
+                or normalized_input.startswith("tell me about silchar")
+                or normalized_input.startswith("about silchar")
+                or normalized_input in {"silchar", "silchar?"}
+            )
+
+            if is_unclear:
+                answer = (
+                    "Here’s a quick overview of Silchar to get you started:\n\n"
+                    "1) Top places to visit: ISKCON Temple, Gandhibagh Park, Sadarghat riverfront (Barak),"
+                    " Bhuban Hill (nearby), and local markets in the central town area.\n\n"
+                    "2) Local food to try: Bengali-style dishes, local sweets, and street snacks"
+                    " around busy market areas.\n\n"
+                    "3) Best time to visit: October to March for more comfortable weather.\n\n"
+                    "4) Getting around: short rides by auto-rickshaw/taxi within town; ask for the nearest"
+                    " landmark if you’re unsure.\n\n"
+                    "Tell me what you’re interested in (temples, history, colleges, food, nature, shopping),"
+                    " and I’ll tailor recommendations."
+                )
+            else:
+                # The new rag_chain returns a dictionary with an "answer" key
+                response = rag_chain.invoke({"input": user_input})
+                answer = response["answer"]
+
+            st.markdown(answer)
+            st.session_state.messages.append({"role": "assistant", "content": answer})
 
 else:
     st.info("👋 Please enter your Gemini API Key in the sidebar to begin your journey through Silchar!")
