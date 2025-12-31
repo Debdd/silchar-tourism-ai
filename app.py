@@ -194,13 +194,21 @@ if google_api_key:
                 "garden",
                 "hill",
             }
-            place_aliases = {
-                "dolu",
-            }
+
+            matches_knowledge_base = False
+            if normalized_input:
+                for entry in silchar_data:
+                    entry_lower = entry.lower()
+                    if normalized_input in entry_lower:
+                        matches_knowledge_base = True
+                        break
+                    if len(tokens) == 1 and tokens[0] and tokens[0] in entry_lower:
+                        matches_knowledge_base = True
+                        break
             looks_like_place_query = (
                 len(tokens) >= 2
                 or any(t in location_hint_tokens for t in tokens)
-                or (len(tokens) == 1 and tokens[0] in place_aliases)
+                or matches_knowledge_base
                 or "?" in normalized_input
             )
             is_unclear = (
