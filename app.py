@@ -172,14 +172,26 @@ if google_api_key:
         ):
             silchar_subcategories["religious"].append(entry)
 
-        if (
-            "lake" in entry_lower
-            or "park" in entry_lower
-            or "hill" in entry_lower
-            or "wetland" in entry_lower
-            or "tea" in entry_lower
-            or "garden" in entry_lower
+        # Only add to nature if the title contains nature-related keywords
+        # but exclude if it's a temple or tunnel with a lake in description
+        is_nature = False
+        
+        # Check for lake but exclude if it's a temple or tunnel
+        if "lake" in entry_title_lower:
+            if "temple" not in entry_title_lower and "tunnel" not in entry_title_lower:
+                is_nature = True
+        
+        # Other nature keywords
+        if not is_nature and (
+            "park" in entry_title_lower
+            or "hill" in entry_title_lower
+            or "wetland" in entry_title_lower
+            or "tea garden" in entry_title_lower
+            or "garden" in entry_title_lower
         ):
+            is_nature = True
+            
+        if is_nature:
             silchar_subcategories["nature"].append(entry)
 
         if (
