@@ -141,6 +141,7 @@ if google_api_key:
     current_district = "cachar"
     for entry in silchar_data:
         entry_lower = entry.lower()
+        entry_title_lower = entry_lower.split(":", 1)[0]
 
         if "karimganj" in entry_lower and "district" in entry_lower:
             current_district = "karimganj"
@@ -193,11 +194,11 @@ if google_api_key:
 
         if (
             (
-                "college" in entry_lower
-                or "university" in entry_lower
-                or "school" in entry_lower
-                or "institute" in entry_lower
-                or re.search(r"\bnit\b", entry_lower)
+                "college" in entry_title_lower
+                or "university" in entry_title_lower
+                or "school" in entry_title_lower
+                or "institute" in entry_title_lower
+                or re.search(r"\bnit\b", entry_title_lower)
             )
             and "ashram" not in entry_lower
             and "vihar" not in entry_lower
