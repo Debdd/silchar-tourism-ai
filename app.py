@@ -114,19 +114,6 @@ if google_api_key:
     # Setup the LLM
     llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.3)
 
-    # Define the Prompt
-    """
-    
-    system_prompt = (
-        "You are a friendly Silchar tourism guide. "
-        "Use the following pieces of retrieved context to answer the question. "
-        "If you don't know the answer, say that you don't know. "
-        "Keep the tone welcoming and helpful. "
-        "\n\n"
-        "{context}"
-    )
-    """
-
     system_prompt = f"""
         You are a helpful Silchar Tourism Assistant. 
         1. First, search the provided 'silchar_data' for specific details.
