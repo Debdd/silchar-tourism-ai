@@ -62,8 +62,6 @@ if google_api_key:
     "ISKCON Silchar: Situated in Ambicapatty. A beautifully built Radha-Krishna temple known for devotional chanting and Janmashtami celebrations.",
     "Dolu Lake: A serene natural spot surrounded by tea gardens. Ideal for nature lovers and birdwatching during winter.",
     "Gandhibag Park & Shahid Minar: A green park located centrally in Silchar, home to the martyrs’ memorial of the 1961 Language Movement. Gandhibag Park offers a tranquil escape amidst the bustling urban landscape. Named in honor of Mahatma Gandhi, this park is a verdant oasis that beckons visitors with its lush greenery and serene ambiance.",
-    "The park's focal point is the Shahid Minar, a poignant memorial dedicated to 11 martyrs who bravely fought for the preservation of the Bengali language.",
-    "Nestled along the Park Road beside a serene lake, Gandhibag Park is a popular spot for families and friends to unwind and rejuvenate.",
     "Sri Sri Radhaballabh Ashram (Shalganga): A premier Vaishnavite spiritual center founded in 1950, known for devotional practice and social service.",
     "Sri Sri Shyamsundar Mandir (Tarapur): A historic Krishna temple renowned for Rath Yatra and Janmashtami festivals.",
     "Satsang Vihar (Anukul Thakur Ashram): A peaceful spiritual center promoting meditation and community service.",
@@ -178,11 +176,12 @@ if google_api_key:
         # but exclude if it's a temple or tunnel with a lake in description
         is_nature = False
         
-        # Check for lake but exclude if it's a temple, tunnel, or Gandhibag Park
+        # Check for lake but exclude specific entries
         if "lake" in entry_title_lower:
             if ("temple" not in entry_title_lower and 
                 "tunnel" not in entry_title_lower and
-                "park" not in entry):
+                "Gandhibag Park" not in entry and
+                "Tea Gardens around Silchar" not in entry):
                 is_nature = True
         
         # Other nature keywords
@@ -319,63 +318,111 @@ if google_api_key:
             st.markdown(user_input)
 
         with st.chat_message("assistant"):
-            normalized_input = " ".join(user_input.strip().lower().split())
-            first_word = normalized_input.split(" ", 1)[0] if normalized_input else ""
-            tokens = [t for t in normalized_input.split(" ") if t]
-
-            category_aliases = {
-                "temple": "religious",
-                "temples": "religious",
-                "religious": "religious",
-                "nature": "nature",
-                "parks": "nature",
-                "park": "nature",
-                "lakes": "nature",
-                "lake": "nature",
-                "hills": "nature",
-                "hill": "nature",
-                "history": "historical",
-                "historical": "historical",
-                "education": "education",
-                "colleges": "education",
-                "college": "education",
-                "universities": "education",
-                "university": "education",
-                "transport": "transport",
-                "travel": "travel_tips",
-                "tips": "travel_tips",
-                "food": "travel_tips",
-                "shopping": "shopping",
-                "market": "shopping",
-                "markets": "shopping",
-                "bazar": "shopping",
-                "bazaar": "shopping",
-                "bazars": "shopping",
-                "bazaars": "shopping",
-                "mall": "shopping",
-                "malls": "shopping",
-                "health": "healthcare",
-                "hospital": "healthcare",
-                "hospitals": "healthcare",
-                "healthcare": "healthcare",
-                "city": "city_life",
-                "clubs": "city_life",
-                "district": None,
-                "cachar": "cachar",
-                "karimganj": "karimganj",
-                "hailakandi": "hailakandi",
-            }
-
-            requested_category = None
-            if normalized_input in silchar_subcategories:
-                requested_category = normalized_input
-            elif first_word in category_aliases and category_aliases[first_word]:
-                requested_category = category_aliases[first_word]
-            else:
-                for t in tokens:
-                    if t in category_aliases and category_aliases[t]:
-                        requested_category = category_aliases[t]
-                        break
+            def handle_user_input(user_input, silchar_data, silchar_subcategories, llm, retriever, chat_history):
+                """Process user input and generate a response."""
+                # Check for general queries about Silchar first
+                user_input_lower = user_input.strip().lower()
+                general_queries = [
+                    'everything about silchar',
+                    'all info about silchar',
+                    'tell me about silchar',
+                    'what can you tell me about silchar',
+                    'show me all about silchar',
+                    'all about silchar',
+                    'complete information about silchar',
+                    'full details about silchar'
+                    'silchar information'
+                    'silchar details'
+                    'silchar info'
+                    'silchar'
+                ]
+                
+                # Check if the query is a general request for information about Silchar
+                if any(query in user_input_lower for query in general_queries):
+                    # Show general info
+                    response = f"{GENERAL_SILCHAR_INFO}\n\n"
+                    
+                    # Show all entries from silchar_data
+                    response += "Here's a comprehensive list of places and information about Silchar and its surroundings:\n\n"
+                    for i, entry in enumerate(silchar_data, 1):
+                        # Just show the title part (before the first colon) for brevity
+                        title = entry.split(':', 1)[0].strip()
+                        response += f"{i}. {title}\n"
+                    
+                    # Add a prompt for more specific information
+                    response += "\nThis is just a summary. Would you like more details about any specific place or aspect of Silchar? " \
+                              "You can ask about categories like 'temples', 'lakes', 'shopping', 'education', etc., " \
+                              "or ask about a specific place by name."
+                    
+                    return response, chat_history
+                
+                # If not a general query, check for subcategory or district match
+                # Define category aliases for better matching
+                category_aliases = {
+                    "temple": "religious",
+                    "mandir": "religious",
+                    "ashram": "religious",
+                    "religious place": "religious",
+                    "worship": "religious",
+                    "spiritual": "religious",
+                    "nature": "nature",
+                    "lake": "nature",
+                    "park": "nature",
+                    "garden": "nature",
+                    "historical": "historical",
+                    "history": "historical",
+                    "heritage": "historical",
+                    "fort": "historical",
+                    "ruins": "historical",
+                    "education": "education",
+                    "college": "education",
+                    "university": "education",
+                    "school": "education",
+                    "institute": "education",
+                    "transport": "transport",
+                    "airport": "transport",
+                    "railway": "transport",
+                    "station": "transport",
+                    "shopping": "shopping",
+                    "market": "shopping",
+                    "bazar": "shopping",
+                    "bazaar": "shopping",
+                    "bazars": "shopping",
+                    "bazaars": "shopping",
+                    "mall": "shopping",
+                    "malls": "shopping",
+                    "healthcare": "healthcare",
+                    "hospital": "healthcare",
+                    "medical": "healthcare",
+                    "clinic": "healthcare",
+                    "city life": "city_life",
+                    "city_life": "city_life",
+                    "club": "city_life",
+                    "stadium": "city_life",
+                    "travel tips": "travel_tips",
+                    "tips": "travel_tips",
+                    "advice": "travel_tips",
+                    "cachar": "cachar",
+                    "karimganj": "karimganj",
+                    "hailakandi": "hailakandi"
+                }
+                
+                # Check for direct category match
+                requested_category = None
+                if user_input_lower in silchar_subcategories:
+                    requested_category = user_input_lower
+                else:
+                    # Check for category aliases
+                    for alias, category in category_aliases.items():
+                        if alias in user_input_lower:
+                            requested_category = category
+                            break
+                    
+                    # If no match found, try matching the first word of the input
+                    if not requested_category:
+                        first_word = user_input_lower.split(" ", 1)[0]
+                        if first_word in category_aliases:
+                            requested_category = category_aliases[first_word]
 
             if requested_category and requested_category in silchar_subcategories:
                 items = silchar_subcategories[requested_category]
