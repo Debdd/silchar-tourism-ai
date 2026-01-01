@@ -1,6 +1,12 @@
 import streamlit as st
 import os
 import re
+import nltk
+from nltk.corpus import stopwords
+
+# Download NLTK stopwords data
+nltk.download('stopwords', quiet=True)
+nltk_stopwords = set(stopwords.words('english'))
 
 # Base LangChain and Google Imports
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
@@ -450,7 +456,7 @@ if google_api_key:
             }
 
             # Initialize normalized_input
-            tokens = [t for t in user_input_lower.split() if t not in stopwords]
+            tokens = [t for t in user_input_lower.split() if t not in nltk_stopwords]
             normalized_input = ' '.join(tokens)
             
             matches_knowledge_base = False
