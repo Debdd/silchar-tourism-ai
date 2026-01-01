@@ -1,7 +1,6 @@
 streamlit
-nltk
 langchain-google-genai
 langchain-community
 langchain-text-splitters
 chromadb
-python-dotenv
+langchain-classic
