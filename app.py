@@ -323,6 +323,35 @@ if google_api_key:
             first_word = normalized_input.split(" ", 1)[0] if normalized_input else ""
             tokens = [t for t in normalized_input.split(" ") if t]
 
+            # Check for general queries about Silchar
+            general_queries = [
+                'everything about silchar',
+                'all info about silchar',
+                'tell me about silchar',
+                'what can you tell me about silchar',
+                'show me all about silchar',
+                'all about silchar',
+                'complete information about silchar',
+                'full details about silchar',
+                'silchar information',
+                'silchar details',
+                'silchar info',
+                'silchar',
+            ]
+
+            if any(query in normalized_input for query in general_queries):
+                response = f"{GENERAL_SILCHAR_INFO}\n\n"
+                response += "Here's a comprehensive list of places and information about Silchar and its surroundings:\n\n"
+                for i, entry in enumerate(silchar_data, 1):
+                    title = entry.split(':', 1)[0].strip()
+                    response += f"{i}. {title}\n"
+                response += "\nThis is just a summary. Would you like more details about any specific place or aspect of Silchar? " \
+                          "You can ask about categories like 'temples', 'lakes', 'shopping', 'education', etc., " \
+                          "or ask about a specific place by name."
+                st.markdown(response)
+                st.session_state.messages.append({"role": "assistant", "content": response})
+                st.stop()
+
             category_aliases = {
                 "temple": "religious",
                 "temples": "religious",
