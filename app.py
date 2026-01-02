@@ -374,7 +374,7 @@ if google_api_key:
                     title = entry.split(':', 1)[0].strip()
                     response += f"{i}. {title}\n"
                 response += "\nThis is just a summary. Would you like more details about any specific place or aspect of Silchar? " \
-                          "You can ask about categories like 'temples', 'lakes', 'shopping', 'education', etc., " \
+                          "You can ask about categories like 'temples', 'tea estate', 'lakes', 'shopping', 'education', etc., " \
                           "or ask about a specific place by name."
                 st.markdown(response)
                 st.session_state.messages.append({"role": "assistant", "content": response})
@@ -446,6 +446,7 @@ if google_api_key:
                 st.stop()
             location_hint_tokens = {
                 "lake",
+                "tea",
                 "temple",
                 "mandir",
                 "park",
