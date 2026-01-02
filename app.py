@@ -108,6 +108,16 @@ if google_api_key:
     "Bhangarpar and Kalain Region: Known for countryside scenery and agricultural fields.",
     "Lakhisahar Area: A growing suburban locality with temples and community centers.",
 
+    # --- DURGA PUJA LIST ---
+    "Durga Puja in Silchar: The city's largest festival, celebrated with grand 'Pandals' and intricate lighting. Silchar is famous for 'Theme Pujas' that rival those of Kolkata. The festivities peak during Maha Saptami, Ashtami, and Navami, with the immersion (Bisharjan) taking place at the Barak River ghats.",
+    "Shyamananda Ashram Durga Puja: One of the oldest and most traditional Pujas in Silchar, known for its spiritual atmosphere and classic 'Ekchala' idols.",
+    "All India Radio (AIR) Colony/Club Road Puja: Famous for its massive budget and innovative architectural themes, often replicating world-famous monuments.",
+    "Public School Road / Ambicapatty Area: A hub for some of the most competitive and artistically decorated Pandals in the city.",
+    "Mitali Sangha (Hospital Road): Renowned for using unique, eco-friendly materials to create stunning thematic structures.",
+    "Aryapatti Durga Puja: Known for its historical legacy and traditional rituals that draw thousands of devotees.",
+    "Durga Puja Travel Tip: During the four days of Puja, Silchar experiences major traffic diversions. The best way to explore is 'Pandal Hopping' on foot or by e-rickshaws. Most Pandals are best viewed at night when the decorative lightings are fully illuminated.",
+    "Bisharjan (Immersion) at Sadarghat: On Dashami, the idols from all over the city are taken in massive processions to the Barak River at Sadarghat for immersion."
+
     # --- KARIMGANJ DISTRICT ---
     "Siddheshwar Shiva Temple (Badarpurghat): A sacred Shiva temple famous for the Baruni Mela holy dip.",
     "Badarpur Fort: A Mughal-era riverside fort overlooking the Barak River.",
@@ -153,6 +163,7 @@ if google_api_key:
         "nature": [],
         "lakes": [],
         "tea": [],
+        "puja": [],
         "historical": [],
         "education": [],
         "transport": [],
@@ -222,6 +233,10 @@ if google_api_key:
         # Check for tea estates
         if "tea estate" in entry_title_lower or "tea garden" in entry_title_lower or "tea" in entry_title_lower:
             silchar_subcategories["tea"].append(entry)
+            
+        # Check for Durga Puja related entries
+        if "durga puja" in entry_lower or "puja" in entry_title_lower or "pandal" in entry_lower or "bisharjan" in entry_lower:
+            silchar_subcategories["puja"].append(entry)
             
         if is_nature:
             silchar_subcategories["nature"].append(entry)
@@ -378,7 +393,7 @@ if google_api_key:
                     title = entry.split(':', 1)[0].strip()
                     response += f"{i}. {title}\n"
                 response += "\nThis is just a summary. Would you like more details about any specific place or aspect of Silchar? " \
-                          "You can ask about categories like 'temples', 'tea estate', 'lakes', 'shopping', 'education', etc., " \
+                          "You can ask about categories like 'temples', 'puja, 'tea estate', 'lakes', 'shopping', 'education', etc., " \
                           "or ask about a specific place by name."
                 st.markdown(response)
                 st.session_state.messages.append({"role": "assistant", "content": response})
@@ -396,6 +411,10 @@ if google_api_key:
                 "tea": "nature",
                 "hills": "nature",
                 "hill": "nature",
+                "puja": "puja",
+                "durga": "puja",
+                "pandal": "puja",
+                "bisharjan": "puja",
                 "history": "historical",
                 "historical": "historical",
                 "education": "education",
@@ -453,6 +472,10 @@ if google_api_key:
                 "tea",
                 "temple",
                 "mandir",
+                "puja",
+                "durga",
+                "pandal",
+                "bisharjan",
                 "park",
                 "college",
                 "university",
