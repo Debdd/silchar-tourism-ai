@@ -152,6 +152,7 @@ if google_api_key:
         "religious": [],
         "nature": [],
         "lakes": [],
+        "tea": [],
         "historical": [],
         "education": [],
         "transport": [],
@@ -212,11 +213,15 @@ if google_api_key:
             "park" in entry_title_lower
             or "hill" in entry_title_lower
             or "wetland" in entry_title_lower
-            or "tea garden" in entry_title_lower
+            or "tea" in entry_title_lower
             or "garden" in entry_title_lower
             or "lake" in entry_title_lower
         ):
             is_nature = True
+            
+        # Check for tea estates
+        if "tea estate" in entry_title_lower or "tea garden" in entry_title_lower or "tea" in entry_title_lower:
+            silchar_subcategories["tea"].append(entry)
             
         if is_nature:
             silchar_subcategories["nature"].append(entry)
@@ -384,6 +389,7 @@ if google_api_key:
                 "park": "nature",
                 "lakes": "nature",
                 "lake": "nature",
+                "tea": "nature",
                 "hills": "nature",
                 "hill": "nature",
                 "history": "historical",
