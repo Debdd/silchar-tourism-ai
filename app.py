@@ -1,6 +1,8 @@
 import streamlit as st
 import os
 import re
+from googlesearch import search
+from urllib.parse import quote_plus
 
 # Base LangChain and Google Imports
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
@@ -533,11 +535,31 @@ if google_api_key:
                 unclear_response = llm.invoke(unclear_messages)
                 answer = getattr(unclear_response, "content", str(unclear_response))
             else:
-                # The new rag_chain returns a dictionary with an "answer" key
+                # First try the local knowledge base
                 response = rag_chain.invoke({"input": user_input})
                 answer = response["answer"]
+                
+                # If the answer indicates lack of information, try a web search
+                if any(phrase in answer.lower() for phrase in ["i don't know", "i don't have", "no information", "couldn't find"]):
+                    try:
+                        from googlesearch import search
+                        from urllib.parse import quote_plus
+                        
+                        # Create a search query
+                        search_query = f"{user_input} Silchar site:wikipedia.org OR site:tripadvisor.com OR site:tourism.assam.gov.in"
+                        search_results = list(search(search_query, num_results=3))
+                        
+                        if search_results:
+                            answer = f"I couldn't find specific information about '{user_input}' in my local knowledge base. " \
+                                    f"Here are some relevant web resources that might help:\n\n"
+                            for i, url in enumerate(search_results, 1):
+                                answer += f"{i}. [{url}]({url})\n"
+                            answer += "\nPlease verify the information as it's from external sources."
+                    except Exception as e:
+                        answer = f"I couldn't find specific information about '{user_input}' in my local knowledge base. " \
+                                f"You might want to search online for more details about this place in Silchar."
 
-            st.markdown(answer)
+            st.markdown(answer, unsafe_allow_html=True)
             st.session_state.messages.append({"role": "assistant", "content": answer})
 
 else:
