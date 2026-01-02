@@ -449,6 +449,15 @@ if google_api_key:
             }
 
             requested_category = None
+            # First check for exact matches in entries (like specific tea estates)
+            exact_matches = [entry for entry in silchar_data if normalized_input in entry.lower() and ':' in entry]
+            if exact_matches and len(exact_matches) == 1:
+                st.markdown(f"### {exact_matches[0].split(':', 1)[0].strip()}")
+                st.markdown(exact_matches[0].split(':', 1)[1].strip())
+                st.session_state.messages.append({"role": "assistant", "content": exact_matches[0]})
+                st.stop()
+                
+            # If no exact match, check categories
             if normalized_input in silchar_subcategories:
                 requested_category = normalized_input
             elif first_word in category_aliases and category_aliases[first_word]:
