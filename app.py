@@ -90,8 +90,6 @@ if google_api_key:
     "Kalyani Sweets Area (Tarapur Market): A locally famous food hub known for mithai and snacks.",
     "Banskandi Hala Hanuman Temple: A popular spiritual destination near Silchar.",
     "Banskandi Madrasa (Islamic Theological Institute): A historic Islamic study center of Northeast India.",
-    "Tea Gardens around Silchar: Scenic plantation belts offering rural landscape views.",
-    "Udharbond Tea Estate: A picturesque tea garden near Silchar, popular for drives.",
     "Srikona Army Cantonment Area Viewpoints: Known for scenic countryside landscapes.",
     "Dargakona Lake: A peaceful waterbody near Assam University surrounded by hills.",
     "Barak River Ghats (Silchar): Scenic riverside viewpoints popular for evening walks.",
@@ -131,6 +129,8 @@ if google_api_key:
     "Sonbeel: The largest wetland in Northeast India, famed for stunning sunset reflections on the water.",
 
         # --- TEA GARDENS OF BARAK VALLEY (Cachar • Hailakandi • Karimganj) ---
+    "Tea Gardens around Silchar: Scenic plantation belts offering rural landscape views.",
+    "Udharbond Tea Estate: A picturesque tea garden near Silchar, popular for drives.",
     "Urrunabund Tea Estate (Cachar): One of the most scenic tea estates near Silchar, surrounded by rolling green hills and peaceful countryside views. A great photography spot for visitors exploring rural Barak Valley.",
     "Iringmara Tea Estate (Cachar): A lush plantation area near Dwarbund, where endless tea bushes stretch across the landscape, showcasing the traditional lifestyle of tea garden communities.",
     "Borojalengha Tea Estate (Cachar): A historic tea garden known for strong Assam CTC tea production and calm natural beauty across the eastern Cachar plains.",
@@ -356,7 +356,7 @@ if google_api_key:
             st.markdown(message["content"])
 
     # User Input
-    if user_input := st.chat_input("Ask about Silchar places OR type a category to list them (temples/religious, tea estate, nature, historical, education, transport, shopping, healthcare, city_life, travel_tips) or a district (cachar, karimganj, hailakandi)."):
+    if user_input := st.chat_input("Ask about Silchar places OR type a category to list them (temples/religious, puja, tea estate, nature, historical, education, transport, shopping, healthcare, city_life, travel_tips) or a district (cachar, karimganj, hailakandi)."):
         st.session_state.messages.append({"role": "user", "content": user_input})
         with st.chat_message("user"):
             st.markdown(user_input)
@@ -384,6 +384,7 @@ if google_api_key:
                 'all',
                 'complete',
                 'full',
+                'places to visit'
             ]
 
             if any(query in normalized_input for query in general_queries):
