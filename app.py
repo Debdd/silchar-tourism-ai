@@ -353,6 +353,7 @@ if google_api_key:
 
             # Check for general queries about Silchar
             general_queries = [
+                'everything',
                 'everything about silchar',
                 'all info about silchar',
                 'tell me about silchar',
@@ -365,6 +366,9 @@ if google_api_key:
                 'silchar details',
                 'silchar info',
                 'silchar',
+                'all',
+                'complete',
+                'full',
             ]
 
             if any(query in normalized_input for query in general_queries):
