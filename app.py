@@ -62,8 +62,6 @@ if google_api_key:
     "ISKCON Silchar: Situated in Ambicapatty. A beautifully built Radha-Krishna temple known for devotional chanting and Janmashtami celebrations.",
     "Dolu Lake: A serene natural spot surrounded by tea gardens. Ideal for nature lovers and birdwatching during winter.",
     "Gandhibag Park & Shahid Minar: A green park located centrally in Silchar, home to the martyrs’ memorial of the 1961 Language Movement. Gandhibag Park offers a tranquil escape amidst the bustling urban landscape. Named in honor of Mahatma Gandhi, this park is a verdant oasis that beckons visitors with its lush greenery and serene ambiance.",
-    "The park's focal point is the Shahid Minar, a poignant memorial dedicated to 11 martyrs who bravely fought for the preservation of the Bengali language.",
-    "Nestled along the Park Road beside a serene lake, Gandhibag Park is a popular spot for families and friends to unwind and rejuvenate.",
     "Sri Sri Radhaballabh Ashram (Shalganga): A premier Vaishnavite spiritual center founded in 1950, known for devotional practice and social service.",
     "Sri Sri Shyamsundar Mandir (Tarapur): A historic Krishna temple renowned for Rath Yatra and Janmashtami festivals.",
     "Satsang Vihar (Anukul Thakur Ashram): A peaceful spiritual center promoting meditation and community service.",
@@ -122,6 +120,27 @@ if google_api_key:
     "Pach Pirr Mukam: A sacred site honoring five revered saints symbolizing religious harmony.",
     "Sonbeel: The largest wetland in Northeast India, famed for stunning sunset reflections on the water.",
 
+        # --- TEA GARDENS OF BARAK VALLEY (Cachar • Hailakandi • Karimganj) ---
+    "Urrunabund Tea Estate (Cachar): One of the most scenic tea estates near Silchar, surrounded by rolling green hills and peaceful countryside views. A great photography spot for visitors exploring rural Barak Valley.",
+    "Iringmara Tea Estate (Cachar): A lush plantation area near Dwarbund, where endless tea bushes stretch across the landscape, showcasing the traditional lifestyle of tea garden communities.",
+    "Borojalengha Tea Estate (Cachar): A historic tea garden known for strong Assam CTC tea production and calm natural beauty across the eastern Cachar plains.",
+    "West Jalinga Tea Estate (Cachar): A major tea estate featuring picturesque estates and green valleys, ideal for scenic drives and countryside exploration.",
+    "Kailashpur Tea Estate (Cachar): A traditional plantation where visitors can witness the charm of Assam's tea culture amid peaceful rural surroundings.",
+    "Dwarbund Tea Estate (Cachar): Located near the famous Chatla wetlands, this tea estate offers a unique blend of plantation scenery and natural bird-rich landscapes.",
+    "Koombergram Tea Estate (Cachar): One of the well-known tea gardens of the region, surrounded by villages, green hill slopes and quiet plantation roads.",
+    "Rosekandy Tea Estate (Cachar): A popular historic tea garden contributing to Barak Valley’s strong tea identity.",
+    
+    "Lallamookh Tea Estate (Hailakandi): A major tea garden in Hailakandi district offering sweeping views of endless tea fields and peaceful rural life.",
+    "Bandookmara Tea Estate (Hailakandi): A scenic plantation belt surrounded by hill forests and tea bushes, representing the heart of the district’s tea economy.",
+    "Aenakhal Tea Estate (Hailakandi): A classic tea estate showcasing the plantation heritage of southern Assam.",
+    "Burni Braes Tea Estate (Hailakandi): One of the largest and most important tea estates in the Hailakandi region.",
+    
+    "Baithakhal Tea Estate (Karimganj): A famous tea estate in Karimganj district known for its picturesque landscapes and historic labour settlements.",
+    "Bhubrighat Tea Estate (Karimganj): A lush plantation area near Patherkandi, home to traditional tea-growing communities.",
+    "Hattikhira Tea Estate (Karimganj): A peaceful estate surrounded by green hills, producing classic Assam tea.",
+    
+    "Tea Tourism Tip: The best time to explore Barak Valley tea gardens is from October to February when the weather is pleasant and the plantations are at their scenic best.",
+    
     # --- TRAVEL TIPS ---
     "Best Time to Visit: November to February for pleasant weather, festivals, and outdoor sightseeing.",
     "Monsoon Advisory: Trekking to hill temples like Bhuban Pahar becomes challenging during June–August.",
@@ -132,6 +151,7 @@ if google_api_key:
     silchar_subcategories = {
         "religious": [],
         "nature": [],
+        "lakes": [],
         "historical": [],
         "education": [],
         "transport": [],
@@ -178,12 +198,14 @@ if google_api_key:
         # but exclude if it's a temple or tunnel with a lake in description
         is_nature = False
         
-        # Check for lake but exclude if it's a temple, tunnel, or Gandhibag Park
+        # Check for lake but exclude if it's a temple, tunnel, or park
         if "lake" in entry_title_lower:
             if ("temple" not in entry_title_lower and 
                 "tunnel" not in entry_title_lower and
-                "park" not in entry):
+                "park" not in entry_title_lower):
                 is_nature = True
+                # Add to lakes category if it's specifically a lake
+                silchar_subcategories["lakes"].append(entry)
         
         # Other nature keywords
         if not is_nature and (
@@ -192,6 +214,7 @@ if google_api_key:
             or "wetland" in entry_title_lower
             or "tea garden" in entry_title_lower
             or "garden" in entry_title_lower
+            or "lake" in entry_title_lower
         ):
             is_nature = True
             
