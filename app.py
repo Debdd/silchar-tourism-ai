@@ -1,7 +1,6 @@
 import streamlit as st
 import os
 import re
-from googlesearch import search
 from urllib.parse import quote_plus
 
 # Base LangChain and Google Imports
