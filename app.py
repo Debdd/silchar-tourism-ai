@@ -206,38 +206,41 @@ if google_api_key:
         ):
             silchar_subcategories["religious"].append(entry)
 
-        # Only add to nature if the title contains nature-related keywords
-        # but exclude if it's a temple or tunnel with a lake in description
+        # Initialize flags
         is_nature = False
         
-        # Check for lake but exclude if it's a temple, tunnel, or park
-        if "lake" in entry_title_lower:
+        # First check for tea estates (most specific category)
+        is_tea = ("tea estate" in entry_title_lower or 
+                 "tea garden" in entry_title_lower or 
+                 ("tea" in entry_title_lower and 
+                  "lake" not in entry_title_lower and
+                  "park" not in entry_title_lower))
+        
+        if is_tea:
+            silchar_subcategories["tea"].append(entry)
+            is_nature = True
+        # Then check for lakes (specific category)
+        elif "lake" in entry_title_lower and not is_tea:
             if ("temple" not in entry_title_lower and 
                 "tunnel" not in entry_title_lower and
                 "park" not in entry_title_lower):
-                is_nature = True
-                # Add to lakes category if it's specifically a lake
                 silchar_subcategories["lakes"].append(entry)
-        
-        # Other nature keywords
-        if not is_nature and (
-            "park" in entry_title_lower
-            or "hill" in entry_title_lower
-            or "wetland" in entry_title_lower
-            or "tea" in entry_title_lower
-            or "garden" in entry_title_lower
-            or "lake" in entry_title_lower
-        ):
+                is_nature = True
+        # Then check for other nature spots (general category)
+        elif ("park" in entry_title_lower or
+              "hill" in entry_title_lower or
+              "wetland" in entry_title_lower or
+              "garden" in entry_title_lower) and not is_tea:
             is_nature = True
             
-        # Check for tea estates
-        if "tea estate" in entry_title_lower or "tea garden" in entry_title_lower or "tea" in entry_title_lower:
-            silchar_subcategories["tea"].append(entry)
-            
-        # Check for Durga Puja related entries
-        if "durga puja" in entry_lower or "puja" in entry_title_lower or "pandal" in entry_lower or "bisharjan" in entry_lower:
+        # Check for Durga Puja related entries (separate category)
+        if ("durga puja" in entry_lower or 
+            "puja" in entry_title_lower or 
+            "pandal" in entry_lower or 
+            "bisharjan" in entry_lower):
             silchar_subcategories["puja"].append(entry)
-            
+        
+        # Add to nature category if applicable
         if is_nature:
             silchar_subcategories["nature"].append(entry)
 
