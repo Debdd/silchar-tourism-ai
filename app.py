@@ -230,8 +230,8 @@ if google_api_key:
         ):
             is_nature = True
             
-        # Check for tea estates, should not have lake in title
-        if not "lake" in entry_title_lower and ("tea estate" in entry_title_lower or "tea garden" in entry_title_lower or "tea" in entry_title_lower):
+        # Check for tea estates
+        if "tea estate" in entry_title_lower or "tea garden" in entry_title_lower or "tea" in entry_title_lower:
             silchar_subcategories["tea"].append(entry)
             
         # Check for Durga Puja related entries
