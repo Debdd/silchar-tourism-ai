@@ -542,22 +542,53 @@ if google_api_key:
                 # If the answer indicates lack of information, try a web search
                 if any(phrase in answer.lower() for phrase in ["i don't know", "i don't have", "no information", "couldn't find"]):
                     try:
-                        from googlesearch import search
+                        import requests
+                        from bs4 import BeautifulSoup
                         from urllib.parse import quote_plus
                         
                         # Create a search query
                         search_query = f"{user_input} Silchar site:wikipedia.org OR site:tripadvisor.com OR site:tourism.assam.gov.in"
-                        search_results = list(search(search_query, num_results=3))
+                        search_url = f"https://www.google.com/search?q={quote_plus(search_query)}"
+                        
+                        # Set headers to mimic a browser request
+                        headers = {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                        }
+                        
+                        # Perform the search
+                        response = requests.get(search_url, headers=headers)
+                        response.raise_for_status()  # Raise an exception for bad status codes
+                        
+                        # Parse the results
+                        soup = BeautifulSoup(response.text, 'html.parser')
+                        search_results = []
+                        
+                        # Extract search result titles and URLs
+                        for g in soup.find_all('div', class_='tF2Cxc'):
+                            link = g.find('a', href=True)
+                            if link:
+                                title = g.find('h3')
+                                if title:
+                                    search_results.append({
+                                        'title': title.text,
+                                        'url': link['href']
+                                    })
+                                    if len(search_results) >= 3:  # Limit to 3 results
+                                        break
                         
                         if search_results:
                             answer = f"I couldn't find specific information about '{user_input}' in my local knowledge base. " \
                                     f"Here are some relevant web resources that might help:\n\n"
-                            for i, url in enumerate(search_results, 1):
-                                answer += f"{i}. [{url}]({url})\n"
+                            for i, result in enumerate(search_results, 1):
+                                answer += f"{i}. [{result['title']}]({result['url']})\n"
                             answer += "\nPlease verify the information as it's from external sources."
+                        else:
+                            answer = f"I couldn't find specific information about '{user_input}' in my local knowledge base. " \
+                                    f"You might want to search online for more details about this place in Silchar."
+                            
                     except Exception as e:
-                        answer = f"I couldn't find specific information about '{user_input}' in my local knowledge base. " \
-                                f"You might want to search online for more details about this place in Silchar."
+                        answer = f"I encountered an error while searching for information about '{user_input}'. " \
+                                f"Please try a different search term or check your internet connection. Error: {str(e)}"
 
             st.markdown(answer, unsafe_allow_html=True)
             st.session_state.messages.append({"role": "assistant", "content": answer})
