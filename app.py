@@ -576,18 +576,42 @@ if google_api_key:
                                         break
                         
                         if search_results:
-                            answer = f"I couldn't find specific information about '{user_input}' in my local knowledge base. " \
-                                    f"Here are some relevant web resources that might help:\n\n"
+                            answer = "Here are some web resources that might help:\n\n"
                             for i, result in enumerate(search_results, 1):
                                 answer += f"{i}. [{result['title']}]({result['url']})\n"
                             answer += "\nPlease verify the information as it's from external sources."
                         else:
-                            answer = f"I couldn't find specific information about '{user_input}' in my local knowledge base. " \
-                                    f"You might want to search online for more details about this place in Silchar."
+                            answer = f"I couldn't find any information about '{user_input}' in Silchar. Please try a different search term."
                             
                     except Exception as e:
-                        answer = f"I encountered an error while searching for information about '{user_input}'. " \
-                                f"Please try a different search term or check your internet connection. Error: {str(e)}"
+                        # If web search fails, try a simpler search
+                        try:
+                            search_query = f"{user_input} Silchar"
+                            search_url = f"https://www.google.com/search?q={quote_plus(search_query)}"
+                            response = requests.get(search_url, headers=headers)
+                            response.raise_for_status()
+                            soup = BeautifulSoup(response.text, 'html.parser')
+                            search_results = []
+                            
+                            for g in soup.find_all('div', class_='tF2Cxc')[:3]:  # Limit to 3 results
+                                link = g.find('a', href=True)
+                                if link:
+                                    title = g.find('h3')
+                                    if title:
+                                        search_results.append({
+                                            'title': title.text,
+                                            'url': link['href']
+                                        })
+                            
+                            if search_results:
+                                answer = "Here are some web resources that might help:\n\n"
+                                for i, result in enumerate(search_results, 1):
+                                    answer += f"{i}. [{result['title']}]({result['url']})\n"
+                                answer += "\nPlease verify the information as it's from external sources."
+                            else:
+                                answer = f"I couldn't find any information about '{user_input}'. Please try a different search term."
+                        except:
+                            answer = f"I couldn't find any information about '{user_input}'. Please try a different search term or check your internet connection."
 
             st.markdown(answer, unsafe_allow_html=True)
             st.session_state.messages.append({"role": "assistant", "content": answer})
