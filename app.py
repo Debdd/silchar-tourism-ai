@@ -212,7 +212,7 @@ if google_api_key:
         # First check for tea estates (most specific category)
         is_tea = ("tea estate" in entry_title_lower or 
                  "tea garden" in entry_title_lower or 
-                 ("tea" in entry_title_lower and 
+                 (" tea " in f" {entry_title_lower} " and  # ' tea ' with spaces on both sides
                   "lake" not in entry_title_lower and
                   "park" not in entry_title_lower))
         
