@@ -135,11 +135,12 @@ def classify_entry(text):
 CATEGORY_TRIGGERS = {
     "lake": "Nature", "lakes": "Nature",
     "temple": "Religious", "temples": "Religious",
-    "tea": "Tea Tourism", "gardens": "Tea Tourism", "garden": "Tea Tourism",
+    "tea": "Tea Tourism", "gardens": "Tea Tourism", "garden": "Tea Tourism", "tea garden": "Tea Tourism", "tea estate": "Tea Tourism",
     "history": "History", "historic": "History", "ruins": "History",
     "education": "Institutional", "hospital": "Institutional", "colleges": "Institutional",
     "shopping": "City Life", "market": "City Life", "bazar": "City Life",
-    "puja": "Festivals", "festivals": "Festivals"
+    "puja": "Festivals", "festivals": "Festivals",
+    "everything": "All", "all": "All", "overview": "All", "general": "All", "overview of everything": "All", "general overview": "All"
 }
 
 # --- 5. RAG ENGINE SETUP ---
