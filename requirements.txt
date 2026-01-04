@@ -3,4 +3,6 @@ langchain-google-genai
 langchain-community
 langchain-text-splitters
 chromadb
+python-dotenv
 langchain-classic
+langchain-core>=0.3.0
