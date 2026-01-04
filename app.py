@@ -169,22 +169,46 @@ with st.sidebar:
 for m in st.session_state.messages:
     with st.chat_message(m["role"]): st.markdown(m["content"])
 
+# --- Process Input ---
 if user_input := st.chat_input("Ask about Silchar..."):
     st.session_state.messages.append({"role": "user", "content": user_input})
-    with st.chat_message("user"): st.markdown(user_input)
+    with st.chat_message("user"):
+        st.markdown(user_input)
 
     with st.chat_message("assistant"):
         normalized = user_input.lower().strip()
+
+        # 1. DEFINE GENERAL INFORMATION TRIGGERS
+        general_triggers = [
+            'everything', 'everything about silchar', 'all info about silchar', 
+            'tell me about silchar', 'what can you tell me about silchar', 
+            'show me all about silchar', 'all about silchar', 
+            'complete information about silchar', 'full details about silchar', 
+            'silchar information', 'silchar details', 'silchar info', 
+            'silchar', 'all', 'complete', 'full', 'places to visit'
+        ]
+
+        # 2. CHECK FOR GENERAL INFORMATION REQUEST
+        if normalized in general_triggers:
+            response = "### 🌴 Complete Silchar & Barak Valley Database\n"
+            response += "Here is everything I have in my records regarding places to visit, history, and local tips:\n\n"
+            
+            # Displaying the entire list organized by their classified types
+            for category in ["Religious", "Tea Tourism", "Nature", "History", "Institutional", "City Life", "Festivals", "Travel Tips"]:
+                matches = [e for e in silchar_data if classify_entry(e) == category]
+                if matches:
+                    response += f"**{category}**\n"
+                    response += "\n".join([f"- {m}" for m in matches]) + "\n\n"
         
-        # 1. KEYWORD ROUTING (Full list response)
-        if normalized in CATEGORY_TRIGGERS:
+        # 3. KEYWORD ROUTING (Existing Category logic)
+        elif normalized in CATEGORY_TRIGGERS:
             target = CATEGORY_TRIGGERS[normalized]
             matches = [e for e in silchar_data if classify_entry(e) == target]
             response = f"### 📍 Complete {target} List\n" + "\n".join([f"- {m}" for m in matches])
         
-        # 2. SEMANTIC RAG (AI response)
+        # 4. SEMANTIC RAG (AI response)
         else:
-            with st.spinner("Searching records..."):
+            with st.spinner("Analyzing your request..."):
                 res = rag_chain.invoke({"input": user_input})
                 response = res["answer"]
         
