@@ -403,23 +403,35 @@ Source: {source}""")
             formatted.append(f"Content: {doc.page_content}\nSource: {source}")
         return "\n\n".join(formatted)
     
+    # Create the RAG chain
     rag_chain = create_retrieval_chain(
         retriever, 
-        question_answer_chain,
-        return_source_documents=True
+        question_answer_chain
     )
     
-    # Add document formatting to the chain
-    def format_rag_response(response):
-        """Format the RAG response with source information."""
-        if 'source_documents' in response and response['source_documents']:
+    # Create a wrapper function to handle the RAG chain execution
+    def get_rag_response(query):
+        """Execute the RAG chain and format the response with sources."""
+        # First get the documents
+        docs = retriever.invoke(query)
+        
+        # Format the context with sources
+        context = format_retrieved_docs(docs)
+        
+        # Get the response from the chain
+        response = rag_chain.invoke({"input": query, "context": context})
+        
+        # Format the final response with sources
+        if isinstance(response, dict) and 'answer' in response:
+            # Extract sources from the retrieved documents
             sources = []
-            for i, doc in enumerate(response['source_documents']):
+            for i, doc in enumerate(docs):
                 source = doc.metadata.get('source', 'Unknown') if hasattr(doc, 'metadata') else 'Unknown'
                 sources.append(f"Source {i+1}: {source}")
             
             if sources:
                 response['answer'] = f"{response['answer']}\n\nSources:\n" + "\n".join(sources)
+        
         return response
 
     # --- 5. CHAT INTERFACE ---
@@ -611,8 +623,8 @@ Source: {source}""")
                 answer = getattr(unclear_response, "content", str(unclear_response))
             else:
                 # Use the enhanced RAG chain to get a better response
-                response = rag_chain.invoke({"input": user_input})
-                answer = response["answer"]
+                response = get_rag_response(user_input)
+                answer = response.get("answer", "I'm sorry, I couldn't generate a response. Please try rephrasing your question.")
                 
                 # Check if we need to improve the response for unknown queries
                 if (any(phrase in answer.lower() for phrase in ["don't know", "not in the context", "no information", "unable to find"]) or
