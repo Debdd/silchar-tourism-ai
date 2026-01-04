@@ -382,21 +382,45 @@ if google_api_key:
         return "\n\n".join([f"Source {i+1}:\n{doc.page_content}" for i, doc in enumerate(docs)])
     
     # Create a more robust question answering chain
+    # Create a custom document formatter function
+    def format_document(doc):
+        source = doc.metadata.get('source', 'Unknown') if hasattr(doc, 'metadata') else 'Unknown'
+        return f"Content: {doc.page_content}\nSource: {source}\n"
+    
     question_answer_chain = create_stuff_documents_chain(
         llm, 
         prompt_template,
-        document_prompt=ChatPromptTemplate.from_template(
-            "Content: {page_content}\n"
-            "Source: {metadata.get('source', 'Unknown')}\n"
-        )
+        document_prompt=ChatPromptTemplate.from_template("""Content: {page_content}
+Source: {source}""")
     )
     
     # Create the RAG chain with better document handling
+    def format_retrieved_docs(docs):
+        """Format retrieved documents with source information."""
+        formatted = []
+        for doc in docs:
+            source = doc.metadata.get('source', 'Unknown') if hasattr(doc, 'metadata') else 'Unknown'
+            formatted.append(f"Content: {doc.page_content}\nSource: {source}")
+        return "\n\n".join(formatted)
+    
     rag_chain = create_retrieval_chain(
         retriever, 
         question_answer_chain,
         return_source_documents=True
     )
+    
+    # Add document formatting to the chain
+    def format_rag_response(response):
+        """Format the RAG response with source information."""
+        if 'source_documents' in response and response['source_documents']:
+            sources = []
+            for i, doc in enumerate(response['source_documents']):
+                source = doc.metadata.get('source', 'Unknown') if hasattr(doc, 'metadata') else 'Unknown'
+                sources.append(f"Source {i+1}: {source}")
+            
+            if sources:
+                response['answer'] = f"{response['answer']}\n\nSources:\n" + "\n".join(sources)
+        return response
 
     # --- 5. CHAT INTERFACE ---
     if "messages" not in st.session_state:
