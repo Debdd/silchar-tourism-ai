@@ -1,6 +1,5 @@
 import streamlit as st
 import os
-import re
 
 # Base LangChain and Google Imports
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
@@ -29,9 +28,9 @@ os.environ["GOOGLE_API_KEY"] = google_api_key
 st.set_page_config(page_title="Silchar Tourism AI", page_icon="🌴", layout="wide")
 
 st.title("🌴 Silchar Tourism AI Guide")
-st.markdown("Your specialized assistant for Silchar, Cachar, and the Barak Valley.")
+st.markdown("### Hybrid Travel Assistant for Silchar & Barak Valley")
 
-# --- 3. THE KNOWLEDGE BASE ---
+# --- 3. THE FULL KNOWLEDGE BASE ---
 silchar_data = [
     # --- CACHAR DISTRICT (Silchar & Surroundings) ---
     "Bhuban Mahadev Temple: Located 50km from Silchar on Bhuban Hill. Built by Kachari King Lakshmi Chandra. It is the most celebrated Shiva temple in South Assam, featuring idols of Shiva and Parvati carved from solid rock. Thousands of 'Shivayats' trek 17km uphill during Mahashivaratri.",
@@ -42,7 +41,7 @@ silchar_data = [
     "Bhairav Bari (Malugram): Dedicated to Lord Bhairav, the protector ('Kotwal') of the city.",
     "ISKCON Silchar: Situated in Ambicapatty. A beautifully built Radha-Krishna temple known for devotional chanting and Janmashtami celebrations.",
     "Dolu Lake: A serene natural spot surrounded by tea gardens. Ideal for nature lovers and birdwatching during winter.",
-    "Gandhibag Park & Shahid Minar: A green park located centrally in Silchar, home to the martyrs’ memorial of the 1961 Language Movement. Gandhibag Park offers a tranquil escape amidst the bustling urban landscape. Named in honor of Mahatma Gandhi, this park is a verdant oasis that beckons visitors with its lush greenery and serene ambiance.",
+    "Gandhibag Park & Shahid Minar: A green park located centrally in Silchar, home to the martyrs’ memorial of the 1961 Language Movement. Gandhibag Park offers a tranquil escape amidst the bustling urban landscape.",
     "Sri Sri Radhaballabh Ashram (Shalganga): A premier Vaishnavite spiritual center founded in 1950, known for devotional practice and social service.",
     "Sri Sri Shyamsundar Mandir (Tarapur): A historic Krishna temple renowned for Rath Yatra and Janmashtami festivals.",
     "Satsang Vihar (Anukul Thakur Ashram): A peaceful spiritual center promoting meditation and community service.",
@@ -60,7 +59,7 @@ silchar_data = [
     "Silchar Airport (Kumbhirgram): The main air gateway to the Barak Valley region.",
     "Silchar Railway Station: A key rail link connecting Barak Valley to the rest of India.",
     "Goldighi Mall: The primary shopping and entertainment mall in Silchar.",
-    "Satindra Mohan Dev Stadium: A major sports and cultural venue in Silchar hosting regional tournaments and public events.",
+    "Satindra Mohan Dev Stadium: A major sports and cultural venue in Silchar hosting regional tournaments.",
     "District Museum, Silchar: Preserves artifacts and history of Barak Valley culture, tribes, and colonial era.",
     "Language Martyrs’ Memorial Stone (Shahid Bedi): Dedicated to the 11 martyrs of the 1961 Bengali Language Movement.",
     "Kurbantilla Mosque: One of the oldest mosques in Silchar, representing the region’s multicultural heritage.",
@@ -68,7 +67,7 @@ silchar_data = [
     "Bharatiya Vidya Bhavan Silchar: A cultural and educational institute promoting Indian heritage.",
     "Kalyani Sweets Area (Tarapur Market): A locally famous food hub known for mithai and snacks.",
     "Banskandi Hala Hanuman Temple: A popular spiritual destination near Silchar.",
-    "Banskandi Madrasa (Islamic Theological Institute): A historic Islamic study center of Northeast India.",
+    "Banskandi Madrasa: A historic Islamic study center of Northeast India.",
     "Srikona Army Cantonment Area Viewpoints: Known for scenic countryside landscapes.",
     "Dargakona Lake: A peaceful waterbody near Assam University surrounded by hills.",
     "Barak River Ghats (Silchar): Scenic riverside viewpoints popular for evening walks.",
@@ -76,127 +75,118 @@ silchar_data = [
     "Club Road Market: A bustling shopping and dining hub.",
     "Ambicapatty Market Area: A commercial center with eateries, shops, and local life.",
     "Phatak Bazar (Silchar): A busy local bazar area known for daily shopping, small eateries, and general stores.",
-    "Janiganj Bazar: One of Silchar’s busiest market areas, popular for daily essentials, street snacks, and local shopping.",
+    "Janiganj Bazar: One of Silchar’s busiest market areas, popular for daily essentials and street snacks.",
     "Tarapur Bazar: A neighborhood market area around Tarapur with everyday shopping and food options.",
-    "Malugram Bazar: A local market area serving nearby residential neighborhoods with daily essentials.",
+    "Malugram Bazar: A local market area serving nearby residential neighborhoods.",
     "Silchar Circuit House: A colonial-era government residence overlooking the town.",
     "Ranighat Area (Barak Riverside): A peaceful riverbank location for evening relaxation.",
     "Kabuganj Area: A rural escape with natural beauty outside Silchar town.",
     "Bhangarpar and Kalain Region: Known for countryside scenery and agricultural fields.",
     "Lakhisahar Area: A growing suburban locality with temples and community centers.",
-    "Durga Puja in Silchar: The city's largest festival, celebrated with grand 'Pandals' and intricate lighting. Silchar is famous for 'Theme Pujas' that rival those of Kolkata. The festivities peak during Maha Saptami, Ashtami, and Navami, with the immersion (Bisharjan) taking place at the Barak River ghats.",
-    "Shyamananda Ashram Durga Puja: One of the oldest and most traditional Pujas in Silchar, known for its spiritual atmosphere and classic 'Ekchala' idols.",
-    "All India Radio (AIR) Colony/Club Road Puja: Famous for its massive budget and innovative architectural themes, often replicating world-famous monuments.",
-    "Public School Road / Ambicapatty Area: A hub for some of the most competitive and artistically decorated Pandals in the city.",
-    "Mitali Sangha (Hospital Road): Renowned for using unique, eco-friendly materials to create stunning thematic structures.",
-    "Aryapatti Durga Puja: Known for its historical legacy and traditional rituals that draw thousands of devotees.",
-    "Durga Puja Travel Tip: During the four days of Puja, Silchar experiences major traffic diversions. The best way to explore is 'Pandal Hopping' on foot or by e-rickshaws. Most Pandals are best viewed at night when the decorative lightings are fully illuminated.",
-    "Bisharjan (Immersion) at Sadarghat: On Dashami, the idols from all over the city are taken in massive processions to the Barak River at Sadarghat for immersion.",
+
+    # --- DURGA PUJA LIST ---
+    "Durga Puja in Silchar: The city's largest festival, celebrated with grand 'Pandals' and intricate lighting. Silchar is famous for 'Theme Pujas' that rival those of Kolkata. Peak festivities on Saptami, Ashtami, and Navami.",
+    "Shyamananda Ashram Durga Puja: One of the oldest and most traditional Pujas in Silchar, known for its spiritual atmosphere.",
+    "All India Radio (AIR) Colony Puja: Famous for its massive budget and innovative architectural themes.",
+    "Public School Road Puja: A hub for some of the most competitive and artistically decorated Pandals.",
+    "Mitali Sangha (Hospital Road): Renowned for using unique, eco-friendly materials to create thematic structures.",
+    "Bisharjan (Immersion) at Sadarghat: On Dashami, idols are taken in processions to the Barak River for immersion.",
+
+    # --- KARIMGANJ & HAILAKANDI DISTRICTS ---
     "Siddheshwar Shiva Temple (Badarpurghat): A sacred Shiva temple famous for the Baruni Mela holy dip.",
     "Badarpur Fort: A Mughal-era riverside fort overlooking the Barak River.",
-    "Madan Mohan Akhra (Karimganj Town): A major Vaishnavite pilgrimage site known for devotional chanting.",
-    "Ramakrishna Mission (Karimganj): A peaceful spiritual and social service center inspired by Swami Vivekananda.",
+    "Madan Mohan Akhra (Karimganj Town): A major Vaishnavite pilgrimage site.",
+    "Ramakrishna Mission (Karimganj): A peaceful spiritual and social service center.",
     "Longai River Banks: A scenic relaxation spot in Karimganj town.",
-    "Siddeshwar Bari Shiv Mandir: A peaceful hillside temple ideal for meditation and devotion.",
+    "Siddeshwar Bari Shiv Mandir (Hailakandi): A peaceful hillside temple ideal for meditation.",
     "Pach Pirr Mukam: A sacred site honoring five revered saints symbolizing religious harmony.",
-    "Sonbeel: The largest wetland in Northeast India, famed for stunning sunset reflections on the water.",
-    "Tea Gardens around Silchar: Scenic plantation belts offering rural landscape views.",
+    "Sonbeel: The largest wetland in Northeast India, famed for stunning sunset reflections.",
+
+    # --- TEA GARDENS ---
+    "Rosekandy Tea Estate: A popular historic tea garden contributing to Barak Valley’s tea identity.",
     "Udharbond Tea Estate: A picturesque tea garden near Silchar, popular for drives.",
-    "Urrunabund Tea Estate (Cachar): One of the most scenic tea estates near Silchar, surrounded by rolling green hills and peaceful countryside views.",
-    "Iringmara Tea Estate (Cachar): A lush plantation area near Dwarbund showcasing the traditional lifestyle of tea garden communities.",
-    "Borojalengha Tea Estate (Cachar): A historic tea garden known for strong Assam CTC tea production.",
-    "West Jalinga Tea Estate (Cachar): A major tea estate featuring picturesque estates and green valleys.",
-    "Kailashpur Tea Estate (Cachar): A traditional plantation where visitors can witness the charm of Assam's tea culture.",
-    "Dwarbund Tea Estate (Cachar): Located near the famous Chatla wetlands.",
-    "Koombergram Tea Estate (Cachar): One of the well-known tea gardens surrounded by quiet plantation roads.",
-    "Rosekandy Tea Estate (Cachar): A popular historic tea garden contributing to Barak Valley’s strong tea identity.",
-    "Lallamookh Tea Estate (Hailakandi): A major tea garden in Hailakandi district offering sweeping views.",
-    "Bandookmara Tea Estate (Hailakandi): A scenic plantation belt representing the heart of the district’s tea economy.",
-    "Aenakhal Tea Estate (Hailakandi): A classic tea estate showcasing the plantation heritage.",
-    "Burni Braes Tea Estate (Hailakandi): One of the largest tea estates in the Hailakandi region.",
-    "Baithakhal Tea Estate (Karimganj): A famous tea estate in Karimganj district known for historic settlements.",
-    "Bhubrighat Tea Estate (Karimganj): A lush plantation area near Patherkandi.",
-    "Hattikhira Tea Estate (Karimganj): A peaceful estate producing classic Assam tea.",
-    "Tea Tourism Tip: Best explore from October to February when weather is pleasant.",
+    "Urrunabund Tea Estate: One of the most scenic estates near Silchar, surrounded by rolling green hills.",
+    "Iringmara Tea Estate: A lush plantation area near Dwarbund showing traditional tea garden lifestyles.",
+    "Borojalengha Tea Estate: A historic garden known for strong Assam CTC tea production.",
+    "West Jalinga Tea Estate: A major estate featuring picturesque estates and green valleys.",
+    "Lallamookh Tea Estate (Hailakandi): A major garden offering sweeping views of endless tea fields.",
+    "Baithakhal Tea Estate (Karimganj): Famous tea estate known for its picturesque landscapes.",
+    
+    # --- TRAVEL TIPS ---
     "Best Time to Visit: November to February for pleasant weather and festivals.",
-    "Monsoon Advisory: Trekking to hill temples like Bhuban Pahar is challenging in June–August.",
+    "Monsoon Advisory: Trekking to hill temples like Bhuban Pahar is difficult June–August.",
     "Local Food Must-Try: Shilaer Shondesh, local fish curries, and Barak Valley tea."
 ]
 
-# --- 4. DATA CLASSIFICATION LOGIC ---
+# --- 4. CLASSIFICATION & ROUTING LOGIC ---
 def classify_entry(text):
     t = text.lower()
-    if any(x in t for x in ["temple", "mandir", "bari", "ashram", "mosque", "mukam", "akhra", "iskcon"]):
-        return "Religious"
-    if any(x in t for x in ["tea garden", "tea estate", "plantation"]):
-        return "Tea Tourism"
-    if any(x in t for x in ["lake", "river", "wetland", "park", "hills", "viewpoint"]):
-        return "Nature"
-    if any(x in t for x in ["ruins", "fort", "museum", "historic", "memorial", "colonial"]):
-        return "History"
-    if any(x in t for x in ["college", "university", "nit", "hospital", "medical", "madrasa"]):
-        return "Institutional"
-    if any(x in t for x in ["mall", "bazar", "market", "stadium", "club", "airport", "railway"]):
-        return "City Life"
-    if any(x in t for x in ["puja", "pandal", "bisharjan"]):
-        return "Festivals"
+    if any(x in t for x in ["temple", "mandir", "bari", "ashram", "mosque", "mukam", "akhra", "iskcon"]): return "Religious"
+    if any(x in t for x in ["tea garden", "tea estate", "plantation"]): return "Tea Tourism"
+    if any(x in t for x in ["lake", "river", "wetland", "park", "hills", "viewpoint"]): return "Nature"
+    if any(x in t for x in ["ruins", "fort", "museum", "historic", "memorial", "ruin"]): return "History"
+    if any(x in t for x in ["college", "university", "nit", "hospital", "medical", "madrasa"]): return "Institutional"
+    if any(x in t for x in ["mall", "bazar", "market", "stadium", "club", "airport", "railway"]): return "City Life"
+    if any(x in t for x in ["puja", "pandal", "bisharjan"]): return "Festivals"
     return "Travel Tips"
 
-# Create sidebar filter
-with st.sidebar:
-    st.header("Search Filters")
-    category_list = ["All", "Religious", "Tea Tourism", "Nature", "History", "Institutional", "City Life", "Festivals", "Travel Tips"]
-    selected_category = st.selectbox("Select Category:", category_list)
+# Mapping for user keywords
+CATEGORY_TRIGGERS = {
+    "lake": "Nature", "lakes": "Nature",
+    "temple": "Religious", "temples": "Religious",
+    "tea": "Tea Tourism", "gardens": "Tea Tourism", "garden": "Tea Tourism",
+    "history": "History", "historic": "History", "ruins": "History",
+    "education": "Institutional", "hospital": "Institutional", "colleges": "Institutional",
+    "shopping": "City Life", "market": "City Life", "bazar": "City Life",
+    "puja": "Festivals", "festivals": "Festivals"
+}
 
 # --- 5. RAG ENGINE SETUP ---
-docs = [Document(page_content=entry, metadata={"category": classify_entry(entry)}) for entry in silchar_data]
-
+docs = [Document(page_content=e, metadata={"category": classify_entry(e)}) for e in silchar_data]
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 splits = text_splitter.split_documents(docs)
-
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
-
-# Configure retriever based on sidebar
-search_kwargs = {"k": 5}
-if selected_category != "All":
-    search_kwargs["filter"] = {"category": selected_category}
-
-retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
+retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.3)
-
-system_prompt = (
-    "You are the Silchar Tourism Assistant. Answer only based on the context provided. "
-    "If the user asks about something not in the context, politely say you don't have that information yet. "
-    "Use a friendly tone and bullet points for lists.\n\n"
-    "Context: {context}"
-)
-
 prompt_template = ChatPromptTemplate.from_messages([
-    ("system", system_prompt),
+    ("system", "You are the Silchar Tourism Assistant. Answer ONLY using the provided context. If the answer is not in the context, say you don't know yet. Context: {context}"),
     ("human", "{input}"),
 ])
-
-qa_chain = create_stuff_documents_chain(llm, prompt_template)
-rag_chain = create_retrieval_chain(retriever, qa_chain)
+rag_chain = create_retrieval_chain(retriever, create_stuff_documents_chain(llm, prompt_template))
 
 # --- 6. CHAT INTERFACE ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+with st.sidebar:
+    if st.button("🗑️ Clear Chat"):
+        st.session_state.messages = []
+        st.rerun()
+    st.info("💡 Tip: Type 'lakes', 'tea', or 'temples' for a full list.")
+
+for m in st.session_state.messages:
+    with st.chat_message(m["role"]): st.markdown(m["content"])
 
 if user_input := st.chat_input("Ask about Silchar..."):
     st.session_state.messages.append({"role": "user", "content": user_input})
-    with st.chat_message("user"):
-        st.markdown(user_input)
+    with st.chat_message("user"): st.markdown(user_input)
 
     with st.chat_message("assistant"):
-        with st.spinner("Searching Barak Valley records..."):
-            response = rag_chain.invoke({"input": user_input})
-            answer = response["answer"]
-            st.markdown(answer)
-            st.session_state.messages.append({"role": "assistant", "content": answer})
+        normalized = user_input.lower().strip()
+        
+        # 1. KEYWORD ROUTING (Full list response)
+        if normalized in CATEGORY_TRIGGERS:
+            target = CATEGORY_TRIGGERS[normalized]
+            matches = [e for e in silchar_data if classify_entry(e) == target]
+            response = f"### 📍 Complete {target} List\n" + "\n".join([f"- {m}" for m in matches])
+        
+        # 2. SEMANTIC RAG (AI response)
+        else:
+            with st.spinner("Searching records..."):
+                res = rag_chain.invoke({"input": user_input})
+                response = res["answer"]
+        
+        st.markdown(response)
+        st.session_state.messages.append({"role": "assistant", "content": response})
