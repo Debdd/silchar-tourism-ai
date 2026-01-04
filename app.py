@@ -76,6 +76,7 @@ silchar_data = [
     "Ambicapatty Market Area: A commercial center with eateries, shops, and local life.",
     "Phatak Bazar (Silchar): A busy local bazar area known for daily shopping, small eateries, and general stores.",
     "Janiganj Bazar: One of Silchar’s busiest market areas, popular for daily essentials and street snacks.",
+    "Itkhola Bazar: A vibrant local market known for fresh produce, household items, and local street food. Popular for its morning fish market and evening snack stalls.",
     "Tarapur Bazar: A neighborhood market area around Tarapur with everyday shopping and food options.",
     "Malugram Bazar: A local market area serving nearby residential neighborhoods.",
     "Silchar Circuit House: A colonial-era government residence overlooking the town.",
@@ -185,7 +186,8 @@ if user_input := st.chat_input("Ask about Silchar..."):
             'show me all about silchar', 'all about silchar', 
             'complete information about silchar', 'full details about silchar', 
             'silchar information', 'silchar details', 'silchar info', 
-            'silchar', 'all', 'complete', 'full', 'places to visit'
+            'silchar', 'all', 'complete', 'full', 'places to visit', 
+            "all places", "full list", "list all", "places around silchar"
         ]
 
         # 2. CHECK FOR GENERAL INFORMATION REQUEST
