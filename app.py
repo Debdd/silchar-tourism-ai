@@ -300,29 +300,58 @@ if google_api_key:
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     splits = text_splitter.split_documents(docs)
     
-    # Create Vector Database (In-Memory for this demo)
+    # Create Vector Database with improved retrieval
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
-    retriever = vectorstore.as_retriever()
+    vectorstore = Chroma.from_documents(
+        documents=splits, 
+        embedding=embeddings,
+        # Add metadata for better filtering
+        collection_metadata={"hnsw:space": "cosine"}
+    )
+    
+    # Configure the retriever with better search parameters
+    retriever = vectorstore.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={
+            'k': 5,  # Retrieve top 5 most similar chunks
+            'score_threshold': 0.7,  # Only return results with similarity score >= 0.7
+            'filter': None  # Can add filters here if needed
+        }
+    )
 
     # --- 4. MODERN RETRIEVAL CHAIN ---
     # Setup the LLM
     llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.3)
 
     system_prompt = f"""
-        You are a helpful Silchar Tourism Assistant. 
-        1. First, search the provided 'silchar_data' for specific details.
-        2. If the user asks about something NOT in 'silchar_data' (e.g., general history, weather, or location), 
-           use the following GENERAL_SILCHAR_INFO to answer:
-           {GENERAL_SILCHAR_INFO}
-        3. If the query is completely unrelated to Silchar or tourism, politely redirect them back to Silchar topics.
-        4. Always provide information in a friendly and helpful tone, suitable for tourists.
-        5. Keep responses concise and easy to understand for tourists.
-        6. If you don't have specific information in 'silchar_data', use the GENERAL_SILCHAR_INFO to provide helpful context.
-        7. When referencing specific places or attractions, try to include nearby landmarks or transportation options.
-        8. If suggesting restaurants or hotels, mention their approximate location or nearby attractions.
-        9. When providing directions or travel tips, keep them practical and easy to follow.
-        10. Always end with a friendly suggestion to explore more of Silchar!
+        You are an expert Silchar Tourism Assistant. Your goal is to provide accurate, helpful, and engaging information about Silchar and the surrounding Barak Valley region.
+
+        When responding to queries, follow these guidelines:
+        1. First, carefully analyze the user's question to understand their intent and the specific information they're seeking.
+        2. Use the provided context to answer the question. The context comes from a knowledge base about Silchar.
+        3. If the context contains relevant information:
+           - Provide a clear, concise answer to the user's question
+           - Include relevant details from the context
+           - Add any additional helpful information that would benefit a tourist
+        4. If the context doesn't contain enough information to fully answer the question:
+           - Acknowledge what you do know from the context
+           - Clearly state what information is not available
+           - Provide the most relevant information you do have
+           - Suggest alternative related topics or rephrasing the question
+        5. If the query is completely unrelated to Silchar or tourism, politely redirect to Silchar-related topics.
+        6. Always maintain a friendly, helpful, and professional tone suitable for tourists.
+        7. When appropriate, include practical information such as:
+           - Nearby landmarks or points of interest
+           - Transportation options
+           - Best times to visit
+           - Any special considerations or tips
+        8. If the user asks for information that's not in the knowledge base:
+           - Be honest about the limitations
+           - Provide the most relevant information available
+           - Suggest alternative ways to find the information if possible
+
+        Additional context about Silchar:
+        {GENERAL_SILCHAR_INFO}
     """
     
     prompt_template = ChatPromptTemplate.from_messages(
@@ -345,9 +374,29 @@ if google_api_key:
         ]
     )
 
-    # Combine the steps into a RAG Chain
-    question_answer_chain = create_stuff_documents_chain(llm, prompt_template)
-    rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+    # Create a more sophisticated RAG Chain
+    
+    # Improved document chain with better handling of retrieved documents
+    def format_docs(docs):
+        """Format documents for better context in the prompt."""
+        return "\n\n".join([f"Source {i+1}:\n{doc.page_content}" for i, doc in enumerate(docs)])
+    
+    # Create a more robust question answering chain
+    question_answer_chain = create_stuff_documents_chain(
+        llm, 
+        prompt_template,
+        document_prompt=ChatPromptTemplate.from_template(
+            "Content: {page_content}\n"
+            "Source: {metadata.get('source', 'Unknown')}\n"
+        )
+    )
+    
+    # Create the RAG chain with better document handling
+    rag_chain = create_retrieval_chain(
+        retriever, 
+        question_answer_chain,
+        return_source_documents=True
+    )
 
     # --- 5. CHAT INTERFACE ---
     if "messages" not in st.session_state:
@@ -537,12 +586,31 @@ if google_api_key:
                 unclear_response = llm.invoke(unclear_messages)
                 answer = getattr(unclear_response, "content", str(unclear_response))
             else:
-                # The new rag_chain returns a dictionary with an "answer" key
+                # Use the enhanced RAG chain to get a better response
                 response = rag_chain.invoke({"input": user_input})
                 answer = response["answer"]
                 
-                # If the answer indicates missing information, provide a helpful response
-                if any(phrase in answer.lower() for phrase in ["don't know", "not in the context", "no information", "unable to find"]):
+                # Check if we need to improve the response for unknown queries
+                if (any(phrase in answer.lower() for phrase in ["don't know", "not in the context", "no information", "unable to find"]) or
+                    (len(response.get("source_documents", [])) == 0)):
+                    
+                    # If no relevant documents were found or the answer is uncertain
+                    st.session_state.last_uncertain_query = user_input
+                    
+                    # Try a more general search with a different approach
+                    fallback_response = llm.invoke(
+                        f"""You are a helpful Silchar Tourism Assistant. 
+                        The user asked: "{user_input}" 
+                        
+                        General information about Silchar:
+                        {GENERAL_SILCHAR_INFO}
+                        
+                        If you can provide any helpful information based on general knowledge about Silchar and tourism, 
+                        please do so in a friendly, helpful manner. 
+                        If you truly don't know, politely explain that and suggest related topics or ways to rephrase the question.
+                        """
+                    )
+                    answer = getattr(fallback_response, "content", str(fallback_response))
                     answer = (
                         f"I couldn't find specific information about '{user_input}' in my local knowledge base. "
                         "Here are some suggestions:\n\n"
