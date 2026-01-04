@@ -1,7 +1,9 @@
 import streamlit as st
 import os
 import re
-from urllib.parse import quote_plus
+import requests
+from urllib.parse import quote_plus, urlencode
+from typing import List, Dict, Optional
 
 # Base LangChain and Google Imports
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
@@ -19,6 +21,64 @@ from dotenv import load_dotenv  # Import dotenv
 # --- 1. LOAD ENVIRONMENT VARIABLES ---
 load_dotenv()  # This looks for a .env file and loads its variables
 google_api_key = os.getenv("GOOGLE_API_KEY")
+
+# Initialize web search cache in session state
+if 'web_cache' not in st.session_state:
+    st.session_state.web_cache = {}
+
+def search_web(query: str, num_results: int = 3) -> List[Dict[str, str]]:
+    """
+    Search the web for information about a place in Silchar/Barak Valley.
+    Returns a list of search results with 'title', 'link', and 'snippet'.
+    """
+    # Check cache first
+    cache_key = f"search_{query.lower().strip()}"
+    if cache_key in st.session_state.web_cache:
+        return st.session_state.web_cache[cache_key]
+    
+    try:
+        # This is a placeholder for actual web search implementation
+        # In a real implementation, you would use a search API here
+        # For example: Google Custom Search API, SerpAPI, etc.
+        
+        # For now, we'll return a mock response
+        mock_results = [
+            {
+                'title': f'Information about {query} in Silchar',
+                'link': f'https://example.com/{quote_plus(query)}',
+                'snippet': f'This is a sample search result for {query} in Silchar. In a real implementation, this would be actual search results from a web search API.'
+            } for _ in range(num_results)
+        ]
+        
+        # Cache the results
+        st.session_state.web_cache[cache_key] = mock_results
+        return mock_results
+        
+    except Exception as e:
+        st.warning(f"Error searching the web: {str(e)}")
+        return []
+
+def get_web_info(place_name: str) -> str:
+    """Get information about a place from the web if not found locally."""
+    # First check if we have a direct match in our local data
+    for entry in silchar_data:
+        if place_name.lower() in entry.lower():
+            return entry
+    
+    # If not found locally, search the web
+    search_results = search_web(f"{place_name} Silchar Barak Valley tourism")
+    
+    if not search_results:
+        return f"I couldn't find detailed information about {place_name} in my local database or on the web. Could you try rephrasing or asking about something else?"
+    
+    # Combine the most relevant search results
+    combined_info = f"Here's what I found about {place_name} from the web:\n\n"
+    for i, result in enumerate(search_results, 1):
+        combined_info += f"{i}. {result['snippet']}\n"
+        combined_info += f"   Source: {result['link']}\n\n"
+    
+    combined_info += "\nNote: This information was gathered from the web and may not be verified."
+    return combined_info
 
 GENERAL_SILCHAR_INFO = """
 Silchar, the 'Island of Peace,' is the headquarters of Cachar district and the gateway to the Barak Valley. 
@@ -537,6 +597,17 @@ if google_api_key:
                 # First try the local knowledge base
                 response = rag_chain.invoke({"input": user_input})
                 answer = response["answer"]
+                
+                # If the answer indicates missing information, try web search
+                if any(phrase in answer.lower() for phrase in ["don't know", "not in the context", "no information", "unable to find"]):
+                    # Extract potential place names from the query (words that start with capital letters)
+                    words = user_input.split()
+                    place_names = [word for word in words if word[0].isupper() and len(word) > 2]  # Filter out short words
+                    
+                    if place_names:
+                        web_info = get_web_info(" ".join(place_names))
+                        if web_info and "couldn't find" not in web_info.lower():
+                            answer = web_info
                 
                 # If the answer indicates lack of information, try a web search
                 if any(phrase in answer.lower() for phrase in ["i don't know", "i don't have", "no information", "couldn't find"]):
