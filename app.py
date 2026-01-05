@@ -121,51 +121,14 @@ silchar_data = [
 
 # --- 4. CLASSIFICATION & ROUTING LOGIC ---
 def classify_entry(text):
-    """Classify an entry into categories based on its content."""
     t = text.lower()
-    
-    # Check for Religious places
-    if any(x in t for x in ["temple", "mandir", "bari", "ashram", "mosque", "mukam", "akhra", "iskcon"]):
-        return "Religious"
-        
-    # Check for Tea Tourism - comprehensive matching with known tea gardens
-    known_tea_gardens = [
-        "rosekandy", "udharbond", "urrunabund", "iringmara", 
-        "borojalengha", "jalinga", "lallamookh", "baithakhal"
-    ]
-    
-    # Check for tea-related terms
-    tea_terms = [
-        "tea garden", "tea estate", "tea plantation", "tea farm", 
-        "tea cultivation", "tea grow", "tea fields", "tea bushes"
-    ]
-    
-    # Check if it's a known tea garden or contains tea-related terms
-    if (any(garden in t for garden in known_tea_gardens) or
-        any(term in t for term in tea_terms) or
-        any(t.startswith(term) for term in tea_terms)):
-        return "Tea Tourism"
-        
-    # Check for Nature
-    if any(x in t for x in ["lake", "lakes", "river", "wetland", "park", "hills", "viewpoint"]):
-        return "Nature"
-        
-    # Check for History
-    if any(x in t for x in ["ruins", "fort", "museum", "historic", "memorial", "ruin"]):
-        return "History"
-        
-    # Check for Institutional
-    if any(x in t for x in ["college", "university", "nit", "hospital", "medical", "madrasa"]):
-        return "Institutional"
-        
-    # Check for City Life
-    if any(x in t for x in ["mall", "bazar", "market", "stadium", "club", "airport", "railway"]):
-        return "City Life"
-        
-    # Check for Festivals
-    if any(x in t for x in ["puja", "pandal", "bisharjan"]):
-        return "Festivals"
-        
+    if any(x in t for x in ["temple", "mandir", "bari", "ashram", "mosque", "mukam", "akhra", "iskcon"]): return "Religious"
+    if any(x in t for x in ["tea garden", "tea estate", "plantation"]): return "Tea Tourism"
+    if any(x in t for x in ["lake", "river", "wetland", "park", "hills", "viewpoint"]): return "Nature"
+    if any(x in t for x in ["ruins", "fort", "museum", "historic", "memorial", "ruin"]): return "History"
+    if any(x in t for x in ["college", "university", "nit", "hospital", "medical", "madrasa"]): return "Institutional"
+    if any(x in t for x in ["mall", "bazar", "market", "stadium", "club", "airport", "railway"]): return "City Life"
+    if any(x in t for x in ["puja", "pandal", "bisharjan"]): return "Festivals"
     return "Travel Tips"
 
 # Mapping for user keywords
@@ -189,69 +152,8 @@ vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
 
 # Function to get all items for a specific category
 def get_items_by_category(category_name):
-    """Return all items from a specific category with enhanced tea garden detection.
-    
-    Args:
-        category_name: The name of the category to filter by
-        
-    Returns:
-        List of Document objects that match the category
-    """
-    category_name = category_name.lower()
-    results = []
-    
-    # Known tea gardens in the database
-    known_tea_gardens = {
-        "rosekandy", "udharbond", "urrunabund", "iringmara",
-        "borojalengha", "jalinga", "lallamookh", "baithakhal"
-    }
-    
-    for doc in docs:
-        doc_category = doc.metadata.get("category", "").lower()
-        doc_content = doc.page_content.lower()
-        
-        # Special handling for tea tourism
-        if category_name == "tea tourism":
-            # Check if it's a known tea garden by name
-            is_known_tea_garden = any(
-                garden in doc_content 
-                for garden in known_tea_gardens
-            )
-            
-            # Check for tea-related terms
-            tea_terms = [
-                "tea garden", "tea estate", "tea plantation",
-                "tea farm", "tea cultivation", "tea fields"
-            ]
-            has_tea_terms = any(term in doc_content for term in tea_terms)
-            
-            if doc_category == category_name or is_known_tea_garden or has_tea_terms:
-                # Ensure the category is set correctly
-                doc.metadata["category"] = "Tea Tourism"
-                results.append(doc)
-        
-        # For other categories
-        elif doc_category == category_name:
-            results.append(doc)
-    
-    # If still no results for tea tourism, try a more aggressive search
-    if category_name == "tea tourism" and not results:
-        for doc in docs:
-            doc_content = doc.page_content.lower()
-            if ("tea" in doc_content and 
-                not any(x in doc_content for x in ["local food", "shopping", "market"])):
-                doc.metadata["category"] = "Tea Tourism"
-                results.append(doc)
-    
-    # Remove duplicates while preserving order
-    seen = set()
-    unique_results = []
-    for doc in results:
-        if doc.page_content not in seen:
-            seen.add(doc.page_content)
-            unique_results.append(doc)
-    
-    return unique_results
+    """Return all items from a specific category."""
+    return [doc for doc in docs if doc.metadata["category"].lower() == category_name.lower()]
 
 # Create a retriever with more results for better context
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
