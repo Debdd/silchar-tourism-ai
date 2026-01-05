@@ -153,7 +153,9 @@ def classify_entry(text):
     if any(x in t for x in ["tea garden", "tea estate", "plantation"]): return "Tea Tourism"
     if any(x in t for x in ["lake", "river", "wetland", "park", "hills", "viewpoint"]): return "Nature"
     if any(x in t for x in ["ruins", "fort", "museum", "historic", "memorial", "ruin"]): return "History"
-    if any(x in t for x in ["college", "university", "nit", "hospital", "medical", "madrasa", "school", "polytechnic", "technical", "engineering", "vidalaya"]): return "Institutional"
+    if any(x in t for x in ["school", "vidalaya", "higher secondary", "high school"]): return "Schools"
+    if any(x in t for x in ["college", "university", "nit", "polytechnic", "technical", "engineering"]): return "Colleges"
+    if any(x in t for x in ["hospital", "medical", "healthcare", "clinic"]): return "Hospitals"
     if any(x in t for x in ["mall", "bazar", "market", "stadium", "club", "airport", "railway"]): return "City Life"
     if any(x in t for x in ["puja", "pandal", "bisharjan"]): return "Festivals"
     return "Travel Tips"
@@ -164,7 +166,9 @@ CATEGORY_TRIGGERS = {
     "temple": "Religious", "temples": "Religious",
     "tea": "Tea Tourism", "gardens": "Tea Tourism", "garden": "Tea Tourism", "tea garden": "Tea Tourism", "tea estate": "Tea Tourism",
     "history": "History", "historic": "History", "ruins": "History",
-    "education": "Institutional", "hospital": "Institutional", "colleges": "Institutional",
+    "school": "Schools", "schools": "Schools", "vidalaya": "Schools",
+    "college": "Colleges", "colleges": "Colleges", "university": "Colleges", "institute": "Colleges",
+    "hospital": "Hospitals", "hospitals": "Hospitals", "medical": "Hospitals", "healthcare": "Hospitals",
     "shopping": "City Life", "market": "City Life", "bazar": "City Life",
     "puja": "Festivals", "festivals": "Festivals",
     "everything": "All", "all": "All", "overview": "All", "general": "All", "overview of everything": "All", "general overview": "All"
