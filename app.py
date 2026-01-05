@@ -121,14 +121,42 @@ silchar_data = [
 
 # --- 4. CLASSIFICATION & ROUTING LOGIC ---
 def classify_entry(text):
+    """Classify an entry into categories based on its content."""
     t = text.lower()
-    if any(x in t for x in ["temple", "mandir", "bari", "ashram", "mosque", "mukam", "akhra", "iskcon"]): return "Religious"
-    if any(x in t for x in ["tea garden", "tea gardens", "tea estate", "tea estates", "plantation"]): return "Tea Tourism"
-    if any(x in t for x in ["lake", "lakes", "river", "wetland", "park", "hills", "viewpoint"]): return "Nature"
-    if any(x in t for x in ["ruins", "fort", "museum", "historic", "memorial", "ruin"]): return "History"
-    if any(x in t for x in ["college", "university", "nit", "hospital", "medical", "madrasa"]): return "Institutional"
-    if any(x in t for x in ["mall", "bazar", "market", "stadium", "club", "airport", "railway"]): return "City Life"
-    if any(x in t for x in ["puja", "pandal", "bisharjan"]): return "Festivals"
+    
+    # Check for Religious places
+    if any(x in t for x in ["temple", "mandir", "bari", "ashram", "mosque", "mukam", "akhra", "iskcon"]):
+        return "Religious"
+        
+    # Check for Tea Tourism - more comprehensive matching
+    tea_terms = [
+        "tea garden", "tea gardens", "tea estate", "tea estates", 
+        "tea plantation", "tea plantations", "tea cultivation",
+        "tea farm", "tea farms", "tea grow"
+    ]
+    if any(term in t for term in tea_terms) or any(t.startswith(term) for term in tea_terms):
+        return "Tea Tourism"
+        
+    # Check for Nature
+    if any(x in t for x in ["lake", "lakes", "river", "wetland", "park", "hills", "viewpoint"]):
+        return "Nature"
+        
+    # Check for History
+    if any(x in t for x in ["ruins", "fort", "museum", "historic", "memorial", "ruin"]):
+        return "History"
+        
+    # Check for Institutional
+    if any(x in t for x in ["college", "university", "nit", "hospital", "medical", "madrasa"]):
+        return "Institutional"
+        
+    # Check for City Life
+    if any(x in t for x in ["mall", "bazar", "market", "stadium", "club", "airport", "railway"]):
+        return "City Life"
+        
+    # Check for Festivals
+    if any(x in t for x in ["puja", "pandal", "bisharjan"]):
+        return "Festivals"
+        
     return "Travel Tips"
 
 # Mapping for user keywords
@@ -152,8 +180,42 @@ vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
 
 # Function to get all items for a specific category
 def get_items_by_category(category_name):
-    """Return all items from a specific category."""
-    return [doc for doc in docs if doc.metadata["category"].lower() == category_name.lower()]
+    """Return all items from a specific category.
+    
+    Args:
+        category_name: The name of the category to filter by
+        
+    Returns:
+        List of Document objects that match the category
+    """
+    category_name = category_name.lower()
+    results = []
+    
+    for doc in docs:
+        doc_category = doc.metadata.get("category", "").lower()
+        doc_content = doc.page_content.lower()
+        
+        # For tea tourism, do additional checks in content
+        if category_name == "tea tourism":
+            tea_terms = [
+                "tea garden", "tea estate", "tea plantation",
+                "tea farm", "tea cultivation"
+            ]
+            if (doc_category == category_name or 
+                any(term in doc_content for term in tea_terms)):
+                results.append(doc)
+        # For other categories, just check the category
+        elif doc_category == category_name:
+            results.append(doc)
+    
+    # Special case: If no tea gardens found, check if any were misclassified
+    if category_name == "tea tourism" and not results:
+        # Look for any entries with 'tea' in the name that might have been missed
+        for doc in docs:
+            if "tea" in doc.page_content.lower():
+                results.append(doc)
+    
+    return results
 
 # Create a retriever with more results for better context
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
