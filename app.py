@@ -46,14 +46,6 @@ silchar_data = [
     "Sri Sri Shyamsundar Mandir (Tarapur): A historic Krishna temple renowned for Rath Yatra and Janmashtami festivals.",
     "Satsang Vihar (Anukul Thakur Ashram): A peaceful spiritual center promoting meditation and community service.",
     "Hanuman Mandir (Tulapatty): A popular shrine in the market heart of Silchar, especially crowded on Tuesdays and Saturdays.",
-    "Shiv Bari (Malugram): A revered Shiva temple known for strong spiritual devotion.",
-    "NIT Silchar: A premier national engineering institute located on the outskirts of Silchar.",
-    "Assam University (Dargakona): A central university known for its scenic green campus.",
-    "GC College: A historic institution of higher learning in the Barak Valley.",
-    "Women’s College: A leading women's education center in central Silchar.",
-    "Cachar College: One of Silchar’s oldest and most respected colleges.",
-    "Silchar Medical College & Hospital (SMCH): The largest healthcare and medical education facility in Barak Valley.",
-    "S.M. Dev Civil Hospital: The oldest government hospital in central Silchar, serving as the primary district hospital.",
     "DSA Ground: The main sports stadium of Silchar, hosting cricket and football tournaments.",
     "India Club: A prestigious social and sports club known for tennis, cricket, and community gatherings.",
     "Silchar Airport (Kumbhirgram): The main air gateway to the Barak Valley region.",
@@ -113,6 +105,41 @@ silchar_data = [
     "Lallamookh Tea Estate (Hailakandi): A major garden offering sweeping views of endless tea fields.",
     "Baithakhal Tea Estate (Karimganj): Famous tea estate known for its picturesque landscapes.",
     
+    # Higher Education (Universities & National Institutes)
+    "Assam University, Silchar (Dargakona): A premier central university established in 1994, located on a scenic 600-acre hilly campus. It offers diverse courses in humanities, sciences, and technology.",
+    "National Institute of Technology (NIT), Silchar: One of the 31 NITs in India, located in Fakiratilla. Known for its world-class engineering programs and a sprawling campus filled with natural lakes.",
+    
+    # Medical & Technical Colleges
+    "Silchar Medical College and Hospital (SMCH): Established in 1968, it is the premier healthcare and medical education hub for Southern Assam, Mizoram, and parts of Manipur.",
+    "Triguna Sen School of Technology: The engineering and technology wing of Assam University, offering B.Tech and M.Tech programs.",
+    "Cachar Polytechnic: A prominent government technical institute located in Meherpur, offering diploma courses in various engineering branches.",
+    "S.M. Dev Civil Hospital: The oldest government hospital in central Silchar, serving as the primary district hospital.",
+
+    # Historic & General Degree Colleges
+    "Gurucharan (GC) College: Established in 1935, it is one of the oldest and most prestigious degree colleges in Northeast India, located in the heart of Silchar.",
+    "Cachar College: Founded in 1960, a leading institution for Arts, Science, and Commerce located near the Trunk Road.",
+    "Radhamadhab College: A well-known degree college located in the Sonai Road area, catering to thousands of students in the region.",
+    "Women's College, Silchar: A pioneer institution for women's higher education in the Barak Valley, located near the Circuit House.",
+    "Janiganj Degree College: A growing institution providing higher education opportunities in the urban center.",
+
+    # Professional & Law Colleges
+    "A.K. Chanda Law College: The primary institution for legal studies in Silchar, offering LLB and integrated law programs.",
+    "Teachers' Training College (B.Ed): A key government institution for training secondary school teachers in the region.",
+
+    # Major Schools (Higher Secondary & Senior Secondary)
+    "Government Boys' Higher Secondary School: A historic school in Silchar known for its contribution to the city's academic and cultural history.",
+    "Government Girls' Higher Secondary School: One of the oldest schools for girls in the city, located near the main market area.",
+    "Silchar Collegiate School: A highly reputed private school known for consistent academic excellence in board examinations.",
+    "Don Bosco School, Silchar: A premier missionary school located in Ramnagar, known for its holistic education and discipline.",
+    "Holy Cross School: A prominent English medium school in Silchar with a long-standing reputation for quality education.",
+    "South Point School: A leading private school known for modern infrastructure and academic performance.",
+    "Kendriya Vidyalaya (KV) Silchar: Located within the NIT campus and Masimpur, following the CBSE curriculum.",
+    "Adhar Chand Higher Secondary School: A historic institution located in the Public School Road area.",
+    "Mahananda High School: A notable school serving the Malugram and surrounding residential areas.",
+    "Oriental High School: One of the established schools in Silchar with a strong focus on traditional and modern education.",
+    "Dav Higher Secondary School: Located in the Tarapur area, a well-known institution for secondary education.",
+    "Srikona High School: Serving the suburban and rural-urban fringe of the Silchar-Kumbhirgram area."
+    
     # --- TRAVEL TIPS ---
     "Best Time to Visit: November to February for pleasant weather and festivals.",
     "Monsoon Advisory: Trekking to hill temples like Bhuban Pahar is difficult June–August.",
@@ -126,7 +153,9 @@ def classify_entry(text):
     if any(x in t for x in ["tea garden", "tea estate", "plantation"]): return "Tea Tourism"
     if any(x in t for x in ["lake", "river", "wetland", "park", "hills", "viewpoint"]): return "Nature"
     if any(x in t for x in ["ruins", "fort", "museum", "historic", "memorial", "ruin"]): return "History"
-    if any(x in t for x in ["college", "university", "nit", "hospital", "medical", "madrasa"]): return "Institutional"
+    if any(x in t for x in ["school", "vidalaya", "higher secondary", "high school"]): return "Schools"
+    if any(x in t for x in ["college", "university", "nit", "polytechnic", "technical", "engineering"]): return "Colleges"
+    if any(x in t for x in ["hospital", "medical", "healthcare", "clinic"]): return "Hospitals"
     if any(x in t for x in ["mall", "bazar", "market", "stadium", "club", "airport", "railway"]): return "City Life"
     if any(x in t for x in ["puja", "pandal", "bisharjan"]): return "Festivals"
     return "Travel Tips"
@@ -137,7 +166,9 @@ CATEGORY_TRIGGERS = {
     "temple": "Religious", "temples": "Religious",
     "tea": "Tea Tourism", "gardens": "Tea Tourism", "garden": "Tea Tourism", "tea garden": "Tea Tourism", "tea estate": "Tea Tourism",
     "history": "History", "historic": "History", "ruins": "History",
-    "education": "Institutional", "hospital": "Institutional", "colleges": "Institutional",
+    "school": "Schools", "schools": "Schools", "vidalaya": "Schools",
+    "college": "Colleges", "colleges": "Colleges", "university": "Colleges", "institute": "Colleges",
+    "hospital": "Hospitals", "hospitals": "Hospitals", "medical": "Hospitals", "healthcare": "Hospitals",
     "shopping": "City Life", "market": "City Life", "bazar": "City Life",
     "puja": "Festivals", "festivals": "Festivals",
     "everything": "All", "all": "All", "overview": "All", "general": "All", "overview of everything": "All", "general overview": "All"
@@ -149,7 +180,14 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10
 splits = text_splitter.split_documents(docs)
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
-retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+
+# Function to get all items for a specific category
+def get_items_by_category(category_name):
+    """Return all items from a specific category."""
+    return [doc for doc in docs if doc.metadata["category"].lower() == category_name.lower()]
+
+# Create a retriever with more results for better context
+retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.3)
 prompt_template = ChatPromptTemplate.from_messages([
@@ -203,11 +241,34 @@ if user_input := st.chat_input("Ask about Silchar..."):
                     response += f"**{category}**\n"
                     response += "\n".join([f"- {m}" for m in matches]) + "\n\n"
         
-        # 3. KEYWORD ROUTING (Existing Category logic)
+        # 3. KEYWORD ROUTING (Category-based listing)
         elif normalized in CATEGORY_TRIGGERS:
             target = CATEGORY_TRIGGERS[normalized]
-            matches = [e for e in silchar_data if classify_entry(e) == target]
-            response = f"### 📍 Complete {target} List\n" + "\n".join([f"- {m}" for m in matches])
+            if target == "All":
+                # Show all categories overview
+                response = "### 🌟 All Categories Overview\n\n"
+                for category in ["Religious", "Tea Tourism", "Nature", "History", "Institutional", "City Life", "Festivals", "Travel Tips"]:
+                    items = get_items_by_category(category)
+                    if items:
+                        response += f"**{category}** ({len(items)} items)\n"
+                        response += "\n".join([f"- {item.page_content.split(':', 1)[0].strip()}" for item in items[:3]])  # Show first 3 items
+                        if len(items) > 3:
+                            response += f"\n  ... and {len(items)-3} more\n"
+                        response += "\n"
+            else:
+                # Show all items in the specific category
+                items = get_items_by_category(target)
+                if items:
+                    response = f"### 📍 {target} in Silchar\n\n"
+                    for i, item in enumerate(items, 1):
+                        name = item.page_content.split(':', 1)[0].strip()
+                        desc = item.page_content.split(':', 1)[1].strip() if ':' in item.page_content else ""
+                        response += f"**{i}. {name}**\n"
+                        if desc:
+                            response += f"{desc}\n\n"
+                    response += f"\n*Found {len(items)} {target.lower()} locations. Would you like more information about any of these?*"
+                else:
+                    response = f"I couldn't find any {target.lower()} locations in my knowledge base."
         
         # 4. SEMANTIC RAG (AI response)
         else:
