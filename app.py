@@ -123,8 +123,8 @@ silchar_data = [
 def classify_entry(text):
     t = text.lower()
     if any(x in t for x in ["temple", "mandir", "bari", "ashram", "mosque", "mukam", "akhra", "iskcon"]): return "Religious"
-    if any(x in t for x in ["tea garden", "tea estate", "plantation"]): return "Tea Tourism"
-    if any(x in t for x in ["lake", "river", "wetland", "park", "hills", "viewpoint"]): return "Nature"
+    if any(x in t for x in ["tea garden", "tea gardens", "tea estate", "tea estates", "plantation"]): return "Tea Tourism"
+    if any(x in t for x in ["lake", "lakes", "river", "wetland", "park", "hills", "viewpoint"]): return "Nature"
     if any(x in t for x in ["ruins", "fort", "museum", "historic", "memorial", "ruin"]): return "History"
     if any(x in t for x in ["college", "university", "nit", "hospital", "medical", "madrasa"]): return "Institutional"
     if any(x in t for x in ["mall", "bazar", "market", "stadium", "club", "airport", "railway"]): return "City Life"
