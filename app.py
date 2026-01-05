@@ -7,6 +7,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
+from langchain.chat_models import init_chat_model
 
 # Imports from the CLASSIC namespace
 from langchain_classic.chains.retrieval import create_retrieval_chain
@@ -190,6 +191,12 @@ def get_items_by_category(category_name):
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
 
 llm = ChatGoogleGenerativeAI(model="gemini-3-flash-preview", temperature=0.3)
+llm = init_chat_model(
+    model="gemini-3-flash-preview",
+    model_provider="google_genai",
+    temperature=0.3,
+    fallback_to_older_version=True # Automatically tries 2.0 if 3.0 fails
+)
 prompt_template = ChatPromptTemplate.from_messages([
     ("system", "You are the Silchar Tourism Assistant. Answer ONLY using the provided context. If the answer is not in the context, say you don't know yet. Context: {context}"),
     ("human", "{input}"),
