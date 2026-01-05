@@ -211,7 +211,7 @@ with st.sidebar:
     if st.button("🗑️ Clear Chat"):
         st.session_state.messages = []
         st.rerun()
-    st.info("💡 Tip: Type 'lakes', 'tea', or 'temples', 'everything' for a full list.")
+    st.info("💡 Tip: Type 'Plan a 3 day trip in silchar', 'lakes', 'tea', or 'temples', 'everything' for a full list.")
 
 for m in st.session_state.messages:
     with st.chat_message(m["role"]): st.markdown(m["content"])
