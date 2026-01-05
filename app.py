@@ -149,7 +149,14 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10
 splits = text_splitter.split_documents(docs)
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
 vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
-retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+
+# Function to get all items for a specific category
+def get_items_by_category(category_name):
+    """Return all items from a specific category."""
+    return [doc for doc in docs if doc.metadata["category"].lower() == category_name.lower()]
+
+# Create a retriever with more results for better context
+retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.3)
 prompt_template = ChatPromptTemplate.from_messages([
@@ -203,11 +210,34 @@ if user_input := st.chat_input("Ask about Silchar..."):
                     response += f"**{category}**\n"
                     response += "\n".join([f"- {m}" for m in matches]) + "\n\n"
         
-        # 3. KEYWORD ROUTING (Existing Category logic)
+        # 3. KEYWORD ROUTING (Category-based listing)
         elif normalized in CATEGORY_TRIGGERS:
             target = CATEGORY_TRIGGERS[normalized]
-            matches = [e for e in silchar_data if classify_entry(e) == target]
-            response = f"### 📍 Complete {target} List\n" + "\n".join([f"- {m}" for m in matches])
+            if target == "All":
+                # Show all categories overview
+                response = "### 🌟 All Categories Overview\n\n"
+                for category in ["Religious", "Tea Tourism", "Nature", "History", "Institutional", "City Life", "Festivals", "Travel Tips"]:
+                    items = get_items_by_category(category)
+                    if items:
+                        response += f"**{category}** ({len(items)} items)\n"
+                        response += "\n".join([f"- {item.page_content.split(':', 1)[0].strip()}" for item in items[:3]])  # Show first 3 items
+                        if len(items) > 3:
+                            response += f"\n  ... and {len(items)-3} more\n"
+                        response += "\n"
+            else:
+                # Show all items in the specific category
+                items = get_items_by_category(target)
+                if items:
+                    response = f"### 📍 {target} in Silchar\n\n"
+                    for i, item in enumerate(items, 1):
+                        name = item.page_content.split(':', 1)[0].strip()
+                        desc = item.page_content.split(':', 1)[1].strip() if ':' in item.page_content else ""
+                        response += f"**{i}. {name}**\n"
+                        if desc:
+                            response += f"{desc}\n\n"
+                    response += f"\n*Found {len(items)} {target.lower()} locations. Would you like more information about any of these?*"
+                else:
+                    response = f"I couldn't find any {target.lower()} locations in my knowledge base."
         
         # 4. SEMANTIC RAG (AI response)
         else:
