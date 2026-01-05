@@ -189,7 +189,7 @@ def get_items_by_category(category_name):
 # Create a retriever with more results for better context
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.3)
+llm = ChatGoogleGenerativeAI(model="gemini-3-flash-preview", temperature=0.3)
 prompt_template = ChatPromptTemplate.from_messages([
     ("system", "You are the Silchar Tourism Assistant. Answer ONLY using the provided context. If the answer is not in the context, say you don't know yet. Context: {context}"),
     ("human", "{input}"),
