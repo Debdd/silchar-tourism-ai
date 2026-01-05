@@ -128,13 +128,22 @@ def classify_entry(text):
     if any(x in t for x in ["temple", "mandir", "bari", "ashram", "mosque", "mukam", "akhra", "iskcon"]):
         return "Religious"
         
-    # Check for Tea Tourism - more comprehensive matching
-    tea_terms = [
-        "tea garden", "tea gardens", "tea estate", "tea estates", 
-        "tea plantation", "tea plantations", "tea cultivation",
-        "tea farm", "tea farms", "tea grow"
+    # Check for Tea Tourism - comprehensive matching with known tea gardens
+    known_tea_gardens = [
+        "rosekandy", "udharbond", "urrunabund", "iringmara", 
+        "borojalengha", "jalinga", "lallamookh", "baithakhal"
     ]
-    if any(term in t for term in tea_terms) or any(t.startswith(term) for term in tea_terms):
+    
+    # Check for tea-related terms
+    tea_terms = [
+        "tea garden", "tea estate", "tea plantation", "tea farm", 
+        "tea cultivation", "tea grow", "tea fields", "tea bushes"
+    ]
+    
+    # Check if it's a known tea garden or contains tea-related terms
+    if (any(garden in t for garden in known_tea_gardens) or
+        any(term in t for term in tea_terms) or
+        any(t.startswith(term) for term in tea_terms)):
         return "Tea Tourism"
         
     # Check for Nature
@@ -180,7 +189,7 @@ vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
 
 # Function to get all items for a specific category
 def get_items_by_category(category_name):
-    """Return all items from a specific category.
+    """Return all items from a specific category with enhanced tea garden detection.
     
     Args:
         category_name: The name of the category to filter by
@@ -191,31 +200,58 @@ def get_items_by_category(category_name):
     category_name = category_name.lower()
     results = []
     
+    # Known tea gardens in the database
+    known_tea_gardens = {
+        "rosekandy", "udharbond", "urrunabund", "iringmara",
+        "borojalengha", "jalinga", "lallamookh", "baithakhal"
+    }
+    
     for doc in docs:
         doc_category = doc.metadata.get("category", "").lower()
         doc_content = doc.page_content.lower()
         
-        # For tea tourism, do additional checks in content
+        # Special handling for tea tourism
         if category_name == "tea tourism":
+            # Check if it's a known tea garden by name
+            is_known_tea_garden = any(
+                garden in doc_content 
+                for garden in known_tea_gardens
+            )
+            
+            # Check for tea-related terms
             tea_terms = [
                 "tea garden", "tea estate", "tea plantation",
-                "tea farm", "tea cultivation"
+                "tea farm", "tea cultivation", "tea fields"
             ]
-            if (doc_category == category_name or 
-                any(term in doc_content for term in tea_terms)):
+            has_tea_terms = any(term in doc_content for term in tea_terms)
+            
+            if doc_category == category_name or is_known_tea_garden or has_tea_terms:
+                # Ensure the category is set correctly
+                doc.metadata["category"] = "Tea Tourism"
                 results.append(doc)
-        # For other categories, just check the category
+        
+        # For other categories
         elif doc_category == category_name:
             results.append(doc)
     
-    # Special case: If no tea gardens found, check if any were misclassified
+    # If still no results for tea tourism, try a more aggressive search
     if category_name == "tea tourism" and not results:
-        # Look for any entries with 'tea' in the name that might have been missed
         for doc in docs:
-            if "tea" in doc.page_content.lower():
+            doc_content = doc.page_content.lower()
+            if ("tea" in doc_content and 
+                not any(x in doc_content for x in ["local food", "shopping", "market"])):
+                doc.metadata["category"] = "Tea Tourism"
                 results.append(doc)
     
-    return results
+    # Remove duplicates while preserving order
+    seen = set()
+    unique_results = []
+    for doc in results:
+        if doc.page_content not in seen:
+            seen.add(doc.page_content)
+            unique_results.append(doc)
+    
+    return unique_results
 
 # Create a retriever with more results for better context
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
