@@ -7,6 +7,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
+from langchain_classic.chat_models import init_chat_model
 
 # Imports from the CLASSIC namespace
 from langchain_classic.chains.retrieval import create_retrieval_chain
@@ -189,7 +190,13 @@ def get_items_by_category(category_name):
 # Create a retriever with more results for better context
 retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.3)
+#llm = ChatGoogleGenerativeAI(model="gemini-3-flash-preview", temperature=0.3)
+llm = init_chat_model(
+    model="gemini-3-flash-preview",
+    model_provider="google_genai",
+    temperature=0.3,
+    fallback_to_older_version=True # Automatically tries 2.0 if 3.0 fails
+)
 prompt_template = ChatPromptTemplate.from_messages([
     ("system", "You are the Silchar Tourism Assistant. Answer ONLY using the provided context. If the answer is not in the context, say you don't know yet. Context: {context}"),
     ("human", "{input}"),
@@ -204,7 +211,7 @@ with st.sidebar:
     if st.button("🗑️ Clear Chat"):
         st.session_state.messages = []
         st.rerun()
-    st.info("💡 Tip: Type 'lakes', 'tea', or 'temples', 'everything' for a full list.")
+    st.info("💡 Tip: Type 'Plan a 3 day trip in silchar', 'lakes', 'tea', or 'temples', 'everything' for a full list.")
 
 for m in st.session_state.messages:
     with st.chat_message(m["role"]): st.markdown(m["content"])
