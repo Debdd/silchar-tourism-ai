@@ -172,6 +172,16 @@ silchar_data = [
     "Raja Gobind Chandra: The last Kachari king, assassinated in 1830 at Haritikar, leading to the British annexation of Cachar in 1832.",
     "Singha Darwaza (Khaspur): The iconic Lion Gate of the Kachari capital, featuring a blend of Mughal and tribal architecture with distinct elephant motifs."
     
+    # --- SEASONAL & MONTHLY CALENDAR ---
+    "January: Peak travel month. Features the month-long Gandhi Mela (commercial fair). Weather is cool and pleasant (10°C-23°C), perfect for picnics at Dolu Lake and birdwatching at Sonbeel.",
+    "February: Ideal for trekking to Bhuban Pahar for Mahashivratri. Thousands of devotees trek 17km uphill. The weather remains dry and mild.",
+    "March & April: Celebration of Basanti Puja (similar to Durga Puja but in spring) and Bengali New Year (Poila Baisakh). The landscape is lush as tea gardens start new flushes.",
+    "May: A month of historical significance. May 19th is Language Martyrs' Day (Bhasha Shahid Dibas), marked by solemn events at the Railway Station and Gandhibag.",
+    "June to August (Monsoon): Heavy rainfall season. While trekking is difficult, it is the best time to see the 'Sea of Sonbeel' as the wetland fills up completely. The Barak River is at its full majestic width.",
+    "September: The lead-up to the festive season. Markets start bustling for Durga Puja shopping (Phatak Bazar and Goldighi Mall are crowded).",
+    "October: The most vibrant month due to Durga Puja. The city features massive 'Theme Pujas' and 24/7 street food stalls. Weather starts cooling down.",
+    "November & December: Post-Puja season. Famous for the Barak Carnival and Raas Leela celebrations in nearby Manipuri villages. Excellent time for outdoor photography in the tea estates.",
+    
     # --- TRAVEL TIPS ---
     "Best Time to Visit: November to February for pleasant weather and festivals.",
     "Monsoon Advisory: Trekking to hill temples like Bhuban Pahar is difficult June–August.",
