@@ -140,6 +140,37 @@ silchar_data = [
     "Oriental High School: One of the established schools in Silchar with a strong focus on traditional and modern education.",
     "Dav Higher Secondary School: Located in the Tarapur area, a well-known institution for secondary education.",
     "Srikona High School: Serving the suburban and rural-urban fringe of the Silchar-Kumbhirgram area."
+
+    # --- CULINARY & DINING ---
+    "Sylheti Tadka: A specialized restaurant known for authentic Sylheti cuisine. Famous for 'Ilish Maanch' (Hilsa) and 'Shidol Chutney' (fermented fish), preserving the traditional flavors of the Barak Valley.",
+    "The Godfather (Shillong Patty): One of Silchar’s most popular multi-cuisine restaurants. Highly rated for North Indian dishes, particularly Tandoori Chicken and Rogan Josh.",
+    "Etyadi (Tarapur): A well-known family dining spot opposite the Police Parade Ground. Offers a mix of Bengali, Chinese, and Continental dishes with occasional live music.",
+    "Hashtag Cafe (Ambicapatty): A trendy youth-centric cafe famous for its coffee, baristas, and light snacks. A popular social hub for students.",
+    "Hasty Tasty: A long-standing vegetarian staple in Silchar, known for quality North Indian and South Indian snacks like Dosa and Chola Bhatura.",
+    "Barak Valley Cruise: A unique floating restaurant located on BSNL Office Road, offering a dining experience on the river.",
+    "Local Street Food: Famous for spicy 'Fuska' (panipuri) with a distinct tangy water and 'Egg Rolls' available at major junctions like Goldighi Mall and Phatak Bazar.",
+
+    # --- CULTURAL EVENTS & FAIRS ---
+    "Barak Carnival: A major annual cultural festival held in late December. Features motorcycle parades, cosplay zones, and diverse cultural performances from 10 ethnic communities.",
+    "Gandhi Mela: The region's largest month-long commercial fair held every January at the Gandhi Mela Ground, featuring stalls from across India.",
+    "Language Martyrs' Day (May 19): A solemn day in Silchar honoring the 11 martyrs of 1961. Major events take place at the Silchar Railway Station (Bhasha Shahid Station) and Gandhibag.",
+    "Savitri Brata: A traditional festival where married women fast and pray for their husbands, showcasing the deep-rooted Bengali culture of the valley.",
+
+    # --- TRANSPORTATION & LOGISTICS ---
+    "Uber in Silchar: Uber Go and Uber Intercity are operational, providing 24/7 reliable transport and easy access to the airport or neighboring districts.",
+    "ASTC Bus Terminus: The Assam State Transport Corporation operates regular buses to Guwahati, Jorhat, and Shillong from the ISBT and Link Road areas.",
+    "E-Rickshaws (Totos): The most common mode of short-distance transport within the city. Eco-friendly and cost-effective for navigating busy markets.",
+    "Silchar Airport (Kumbhirgram): Located 22km from the city; connected by pre-paid taxis and private cab services.",
+
+    # --- OFFBEAT & REGIONAL SPOTS ---
+    "Jatinga (Dima Hasao): Located 80km from Silchar, famous for the mysterious 'Bird Suicide' phenomenon and its misty, scenic hill views.",
+    "Maibong: Located 137km from Silchar, the ancient capital of the Kachari Kingdom before Khaspur. Home to stone-carved temples and the Mahur River.",
+    "Malni Chandipur: A scenic village area known for its traditional pottery and rural charm, located on the outskirts of Silchar.",
+    "Khaowa Range: A series of small hillocks near the city offering panoramic views of the Barak Valley, popular for light trekking.",
+
+    # --- ADDITIONAL HISTORICAL CONTEXT ---
+    "Raja Gobind Chandra: The last Kachari king, assassinated in 1830 at Haritikar, leading to the British annexation of Cachar in 1832.",
+    "Singha Darwaza (Khaspur): The iconic Lion Gate of the Kachari capital, featuring a blend of Mughal and tribal architecture with distinct elephant motifs."
     
     # --- TRAVEL TIPS ---
     "Best Time to Visit: November to February for pleasant weather and festivals.",
